@@ -1,4 +1,16 @@
 baseURL: ""
 languageCode: en-us
 title: Weeblog
-theme: cupper-hugo-theme 
+theme: cupper-hugo-theme
+
+menu:
+  nav:
+    - name: Home
+      url: /
+      weight: 1
+    - name: Blog
+      url: /post/
+      weight: 2
+    - name: Tags
+      url: /tags/
+      weight: 3

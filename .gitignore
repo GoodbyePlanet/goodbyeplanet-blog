@@ -1,3 +1,5 @@
 .idea
 .gitmodules
 .hugo_build.lock
+
+resources/
