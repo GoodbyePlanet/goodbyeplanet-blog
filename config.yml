@@ -1,7 +1,11 @@
 baseURL: ""
 languageCode: en-us
+defaultContentLanguage: en
 title: Weeblog
 theme: cupper-hugo-theme
+
+params:
+  footer: "**Weeblog** is created by [GoodbyePlanet](https://github.com/GoodbyePlanet). All rights to the **Mother Earth**."
 
 menu:
   nav:
@@ -14,3 +18,6 @@ menu:
     - name: Tags
       url: /tags/
       weight: 3
+    - name: Contribute
+      url: /contribute/
+      weight: 4

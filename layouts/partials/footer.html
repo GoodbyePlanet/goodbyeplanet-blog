@@ -9,6 +9,6 @@
     </label>
   </div>
   {{ with .Site.Params.footer }}
-    {{ . | markdownify }}
+    {{ . | $.Page.RenderString }}
   {{ end }}
 </footer>
