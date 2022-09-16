@@ -36,6 +36,16 @@
       </div>
     {{ end }}
 
+    {{ with .Params.authors }}
+      <div class="author">
+        {{ range . }}
+          <strong>Author:</strong>
+          {{ $href := print ("authors/" | relLangURL) (. | urlize) "/" }}
+          <a href="{{ $href }}">{{ . }}</a>
+        {{ end }}
+      </div>
+    {{ end }}
+
     {{ partial "toc.html" . }}
 
     {{ .Content }}

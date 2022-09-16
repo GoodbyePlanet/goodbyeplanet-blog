@@ -7,6 +7,10 @@ theme: cupper-hugo-theme
 params:
   footer: "**Weeblog** is created by [GoodbyePlanet](https://github.com/GoodbyePlanet). All rights to the **Mother Earth**."
 
+taxonomies:
+  tag: tags
+  author: authors
+
 menu:
   nav:
     - name: Home
@@ -18,6 +22,9 @@ menu:
     - name: Tags
       url: /tags/
       weight: 3
+    - name: Authors
+      url: /authors/
+      weight: 4
     - name: Contribute
       url: /contribute/
-      weight: 4
+      weight: 5

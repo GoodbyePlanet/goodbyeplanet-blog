@@ -469,6 +469,12 @@ caption {
     border: 0;
 }
 
+/*Author*/
+.author {
+    margin: 0;
+    font-size: 0.85rem;
+}
+
 /* Tags */
 .tags {
     margin-top: 0;
