@@ -7,3 +7,9 @@ WEEBLOG
 hugo
 ```
 #### This will create `public` folder
+
+### To start hugo server
+
+```shell
+hugo server
+```
