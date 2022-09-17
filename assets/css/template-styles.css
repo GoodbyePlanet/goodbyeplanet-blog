@@ -551,7 +551,7 @@ figcaption {
 main {
     display: block;
     counter-reset: fig;
-    min-height: 80vh;
+    min-height: 85vh;
 }
 figcaption::before {
     counter-increment: fig;
