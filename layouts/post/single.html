@@ -21,8 +21,8 @@
 
     {{ with .Params.tags }}
       <div class="tags">
-        <strong>{{ T "tags" }} </strong>
         <ul aria-label="{{ T "aria_label_tags" }}">
+          <strong>Tags: </strong>
           {{ range . }}
             <li>
               <svg class="tag-icon" aria-hidden="true" viewBox="0 0 177.16535 177.16535" focusable="false">
@@ -38,8 +38,8 @@
 
     {{ with .Params.authors }}
       <div class="author">
+        <strong>Author:</strong>
         {{ range . }}
-          <strong>Author:</strong>
           {{ $href := print ("authors/" | relLangURL) (. | urlize) "/" }}
           <a href="{{ $href }}">{{ . }}</a>
         {{ end }}
