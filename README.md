@@ -13,3 +13,6 @@ hugo
 ```shell
 hugo server
 ```
+
+Thanks to 
+  Gustavo Paz for amazing font
