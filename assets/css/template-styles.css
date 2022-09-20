@@ -93,6 +93,13 @@ div:not([tabindex]):focus {
   display: none;
 }
 
+/*Custom styles*/
+.main-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 /* Skip link */
 [href="#main"] {
     display: block;
@@ -364,6 +371,8 @@ caption {
 [role="contentinfo"] {
     font-size: 0.85rem;
     text-align: center;
+    margin-top: 2rem;
+    flex: 1;
 }
 
 /* Patterns navigation */
@@ -437,18 +446,6 @@ caption {
 .toc ol {
     margin-left: 0.75rem;
     margin-top: 0.5rem;
-}
-
-/* Disqus Comments */
-#disqus-container {
-  text-align: center;
-}
-#disqus-button {
-  width: 100%;
-  padding: 0.25em 0.75em;
-}
-#disqus-comments {
-  display: none; 
 }
 
 /* Pattern lists */
@@ -551,7 +548,8 @@ figcaption {
 main {
     display: block;
     counter-reset: fig;
-    min-height: 85vh;
+    margin-top: 1rem;
+    flex: 90;
 }
 figcaption::before {
     counter-increment: fig;
@@ -739,6 +737,11 @@ li > svg {
     height: 0.75em;
     width: 0.75em;
     margin-right: 0.25em;
+}
+h2 svg {
+    margin-right: 0;
+    width: 0.85em;
+    height: 0.85em;
 }
 h1 svg {
   margin-right: 0;
