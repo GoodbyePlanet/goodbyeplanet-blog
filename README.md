@@ -1,7 +1,5 @@
 # WEEBLOG
 
-### Short blogs
-
 ### Weeblog is here => [Weeblog](https://weeblog-kappa.vercel.app)
 
 ### Installing
@@ -20,7 +18,7 @@ hugo
 hugo server
 ```
 
-### Build with
+### Built with
 
 [Hugo](https://gohugo.io/)
 
