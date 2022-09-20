@@ -10,5 +10,5 @@ Blogs will be about anything that can potentially improve your life or about thi
 might be interesting to know.
 
 Every blog will be small and should not take more than 3 minutes to read and understand. Also, if you have topic
-that you can summarize in 3 minutes and you're willing to share it here, fill free to do so. Instructions to
-contribute are [here](/contribure).
+that you can summarize in 3 minutes, and you're willing to share it here, fill free to do so. Instructions to
+contribute are [here](/contribute).
