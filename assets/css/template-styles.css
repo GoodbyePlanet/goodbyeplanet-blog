@@ -2,7 +2,7 @@
 @font-face {
     font-family: 'Semi Square';
     /*noinspection CssUnknownTarget*/
-    src: url('{{ "css/fonts/anita_semi_square.ttf" | absURL }}');
+    src: url('{{ "/fonts/anita_semi_square.ttf" | absURL }}');
     font-style: normal;
 }
 *,
