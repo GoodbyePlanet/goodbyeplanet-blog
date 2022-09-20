@@ -3,7 +3,7 @@ title: "Vim 001 - Exit like a millionaire"
 date: 2022-09-20
 tags: [vim]
 authors:
-- Nemanja
+    - Nemanja
 ---
 
 If you are here you most likely have a problem with exiting *Vim*?.
