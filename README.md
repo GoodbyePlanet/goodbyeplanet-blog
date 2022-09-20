@@ -20,7 +20,7 @@ hugo
 hugo server
 ```
 
-### Build with
+### Built with
 
 [Hugo](https://gohugo.io/)
 
