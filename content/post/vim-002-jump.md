@@ -52,6 +52,6 @@ I will do:
 
 - - -
 
-**Now you are jumping like a **kangaroo** :)**
+**Now jump to the vim.js and start jumping like a **kangaroo** :)**
 
 Thanks to [Lu Wang](https://github.com/coolwanglu) for creating **vim.js**.
