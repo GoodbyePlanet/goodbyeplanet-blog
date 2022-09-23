@@ -38,7 +38,7 @@ If you want to exit without saving the file you can do:
 but, better, faster way:
 
 {{< cmd >}}
-:ZQ
+ZQ
 {{</ cmd >}}
 
 Now you know how to exit Vim like a millionaire :).
