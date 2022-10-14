@@ -7,7 +7,7 @@ authors:
 ---
 
 If you're developer I'm pretty sure that by working with *git* every day it happened that you committed some changes
-and then you realize that you made a typo in the commit message, or you realize that you have to add one more
+and then you realized that you made a typo in the commit message, or you realized that you have to add one more
 line of code, and for that small change there is no reason to add completely new commit.
 This is where *--amend* option comes handy.
 
