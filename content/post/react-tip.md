@@ -7,6 +7,7 @@ authors:
 ---
 
 Have you ever done something like this in your ReactJS code?
+
 ```js
 function ComponentA() {
 
