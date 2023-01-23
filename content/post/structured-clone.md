@@ -38,4 +38,9 @@ clone of a given object. And using it is pretty simple:
 structuredClone(value)
 ```
 
+However, *structuredClone* has its own limitations:
+
+1. If you have function as a property of an object it will be discarded quietly.
+2. It also discards the object's prototype chain, so it will not work with class instances.
+
 And that's pretty much it, if you need more info go [here](https://developer.mozilla.org/en-US/docs/Web/API/structuredClone).
