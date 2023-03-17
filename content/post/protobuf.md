@@ -29,7 +29,7 @@ age: 30
 isStudent: false
 ```
 
-calculated size is 15 Bytes.
+calculated size is 12 Bytes.
 
 ```
 {
