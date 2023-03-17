@@ -29,7 +29,7 @@ age: 30
 isStudent: false
 ```
 
-calculated Byte size is 15 Bytes.
+calculated size is 15 Bytes.
 
 ```
 {
@@ -39,7 +39,7 @@ calculated Byte size is 15 Bytes.
 }
 ```
 
-For the JSON format Byte size is 51.
+For the JSON format calculated size is 51 Bytes.
 
 This makes sense because JSON is a text-based format that uses Unicode encoding system to represent characters, because of that it can become large. On the other hand
 Protocol Buffers use binary encoding which allows them to be smaller.
@@ -62,4 +62,4 @@ typed schema definition, and mechanism for serializing, deserializing data. They
 Because of their performance advantages they are mostly used as a way to exchange large amount of data between different services. If services/applications
 are written in different languages they are good fit because they provide consistent way of exchanging data by providing code generation for [multiple languages](https://protobuf.dev/overview/#cross-lang). 
 
-If you would like to learn more about Protocol Buffers than what's summarized here, go to their [DOCS](https://protobuf.dev/).
+If you would like to learn more about Protocol Buffers than what's summarized here, please refer to their [DOCS](https://protobuf.dev/).
