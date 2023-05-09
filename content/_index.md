@@ -1,5 +1,5 @@
 ---
-title: "Blog"
+title: "Weeblog"
 ---
 
 Hi there, I'm [GoodbyePlanet](https://github.com/GoodbyePlanet).
