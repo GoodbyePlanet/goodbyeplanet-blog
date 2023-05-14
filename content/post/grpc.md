@@ -21,7 +21,7 @@ programs can interact with each other as if they are on the same machine.
 There are several implementations of the **RPC**, one of them is **gRPC**.
 
 At its core **gRPC** uses Protocol Buffers as its data serialization format.
-You can read more about Protocol Buffers in my previous blog. [Protocol Buffers](https://weeblog-kappa.vercel.app/post/protobuf).
+You can read more about Protocol Buffers in my previous blog. [Protocol Buffers](https://goodbyeplanet-blog.vercel.app/post/protobuf).
 
 **gRPC** is very useful in scenarios where low-latency communication between backend services is required. It's 
 very powerful for cross-platform communication because of **gRPC** support for different [programming languages](https://grpc.io/docs/languages/).
