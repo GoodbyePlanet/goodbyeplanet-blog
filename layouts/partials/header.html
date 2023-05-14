@@ -1,6 +1,6 @@
 <header class="intro-and-nav" role="banner">
   <div>
-    <div class="intro">
+    <div class="intro center">
       <a
         class="logo"
         href="{{ .Site.BaseURL }}"
@@ -9,8 +9,8 @@
         {{ with .Site.Params.navTitleText }}
           <h1>{{ . }}</h1>
         {{ else }}
-          <img 
-            src="{{ "images/weeblog.png" | relURL }}"
+          <img
+            src="{{ "images/goodbyeplanet.png" | relURL }}"
             alt="{{ .Site.Params.logoAlt | default "Logo" }}"
           >
         {{ end }}
