@@ -5,7 +5,7 @@ title: "Contribute"
 
 ## Steps to Contribute
 
-1. Fork this repository [GoodbyePlanet blog](https://github.com/GoodbyePlanet/goodbyeplanet).
+1. Fork this repository [GoodbyePlanet blog](https://github.com/GoodbyePlanet/goodbyeplanet-blog).
 2. Clone the repository to your local machine.
 3. Create a new branch for your contribution.
 4. Go to *content -> post* and create *.md* file with meaningful name for your short blog post.
