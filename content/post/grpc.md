@@ -1,7 +1,7 @@
 ---
 title: "Understanding gRPC - With example project"
 date: 2023-05-08
-tags: [grpc, rpc]
+tags: [grpc, rpc, typescript, java, python]
 authors:
     - Nemanja
 ---
