@@ -1,6 +1,6 @@
-# WEEBLOG
+# GoodbyePlanet blog
 
-### Weeblog is here => [Weeblog](https://weeblog-kappa.vercel.app)
+### GoodbyePlanet blog is here => [Blog](https://weeblog-kappa.vercel.app)
 
 ### Installing
 
