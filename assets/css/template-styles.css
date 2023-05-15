@@ -497,6 +497,9 @@ caption {
     margin-top: 0;
     font-size: 0.85rem;
 }
+.single-pb {
+    padding-bottom: .25rem;
+}
 
 /* Notes and warnings */
 .note {
@@ -559,7 +562,9 @@ figcaption::before {
     content: 'Figure ' counter(fig) ':\0020';
     font-weight: bold;
 }
-
+.single-title {
+    padding-bottom: 1rem;
+}
 /* Code blocks */
 pre[class*=language-] {
     background: none;
