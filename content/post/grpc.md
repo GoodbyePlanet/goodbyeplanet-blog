@@ -29,9 +29,11 @@ very powerful for cross-platform communication because of **gRPC** support for d
 Ok, enough of the theory. I've created a small project to play around with **gRPC**.
 I have three services. "*api-gateway*" which is implemented in Typescript. It's an express server that exposes `api/users` and `api/users/:id`
 endpoints, it also acts as a **gRPC** client which communicates with "*user-service*" implemented in Python. This service acts as a both
-**gRPC** server and client. It's a client for the third service "*order-service*" implemented in Java.
+**gRPC** server and client. "*user-service*" is also a client for the third "*order-service*" which is **gRPC** server implemented in Java.
+
+![gPRC-diagram](/images/grpcdiagram.png)
 
 Here is the [Github Repo](https://github.com/GoodbyePlanet/grpc_example).
-Clone it, fork it, and play around with it. I think the best way to learn is by implementing something in a chosen technology.
+Clone it or fork it, and play around with it. The best way to learn is by implementing something on your own :).
 
 Have fun!
