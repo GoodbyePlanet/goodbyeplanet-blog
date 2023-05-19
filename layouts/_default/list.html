@@ -9,16 +9,17 @@
     aria-label="{{ T "search_aria_label" }}"
   />
   {{ end }}
-  <ul class="patterns-list" id="list">
-    {{ range .Pages.ByPublishDate.Reverse }}
-    <li>
-      <h2>
-        <a href="{{ .RelPermalink }}">
-          {{ .Title }}
-        </a>
-      </h2>
+
+  {{ range (where .Site.RegularPages "Type" "in" (slice "post")).GroupByDate "2006" }}
+  <h3>{{ .Key }}</h3>
+  <ul class="patterns-list">
+    {{ range .Pages }}
+    <li class="aaa">
+      <a class="title" href="{{ .Params.externalLink | default .RelPermalink }}">{{ .Title }}</a>
     </li>
     {{ end }}
   </ul>
+  {{ end }}
+
 </main>
 {{ end }}
