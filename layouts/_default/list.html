@@ -3,23 +3,31 @@
   <h1>{{ .Title }}</h1>
   {{ if site.Params.search }}
   <input
-    id="search"
-    type="text"
-    placeholder="{{ T "search_placeholder" }}"
-    aria-label="{{ T "search_aria_label" }}"
+          id="search"
+          type="text"
+          placeholder="{{ T "search_placeholder" }}"
+  aria-label="{{ T "search_aria_label" }}"
   />
   {{ end }}
 
-  {{ range (where .Site.RegularPages "Type" "in" (slice "post")).GroupByDate "2006" }}
+  {{ $tag := .Title }}
+  {{ $filteredPages := where .Site.RegularPages "Type" "in" (slice "post") }}
+
+  {{ if and $tag (ne $tag "Blog") }}
+    {{ $filteredPages = where $filteredPages "Params.tags" "intersect" (slice $tag) }}
+  {{ end }}
+
+  {{ range $filteredPages.GroupByDate "2006" }}
   <h3>{{ .Key }}</h3>
-  <ul class="patterns-list">
-    {{ range .Pages }}
-    <li class="aaa">
-      <a class="title" href="{{ .Params.externalLink | default .RelPermalink }}">{{ .Title }}</a>
+  <ul class="patterns-list" id="list">
+    {{ range .Pages.ByPublishDate.Reverse }}
+    <li>
+      <a href="{{ .RelPermalink }}">
+        {{ .Title }}
+      </a>
     </li>
     {{ end }}
   </ul>
   {{ end }}
-
 </main>
 {{ end }}

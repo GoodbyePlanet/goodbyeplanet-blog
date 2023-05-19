@@ -12,5 +12,5 @@ title: "Contribute"
    
     4.1. Use markdown notation, and follow one of the already existing examples.
 
-    4.2. Keep in mind that blog should be small enough to fit in 3 minutes read.
+    4.2. Keep in mind that blog should be small enough to fit in 10 minutes read.
 5. Create a Pull Request.

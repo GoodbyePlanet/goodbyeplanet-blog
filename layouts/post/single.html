@@ -37,8 +37,7 @@
       <div class="author">
         <strong>Author:</strong>
         {{ range . }}
-          {{ $href := print ("authors/" | relLangURL) (. | urlize) "/" }}
-          <a href="{{ $href }}">{{ . }}</a>
+          <span>{{ . }}</span>
         {{ end }}
       </div>
     {{ end }}

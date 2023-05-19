@@ -22,9 +22,6 @@ menu:
     - name: Tags
       url: /tags/
       weight: 3
-    - name: Authors
-      url: /authors/
-      weight: 4
     - name: Contribute
       url: /contribute/
-      weight: 5
+      weight: 4
