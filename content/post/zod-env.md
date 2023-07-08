@@ -1,7 +1,7 @@
 ---
 title: "Creating types for process.env with Zod"
 date: 2023-07-08
-tags: [script, javascript]
+tags: [typescript, zod, processEnv]
 authors:
     - Nemanja
 ---
