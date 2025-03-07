@@ -2,7 +2,7 @@
 @font-face {
     font-family: 'Semi Square';
     /*noinspection CssUnknownTarget*/
-    src: url('{{ "/fonts/anita_semi_square.ttf" | absURL }}');
+    src: url('{{ "/fonts/SpaceGrotesk-Regular.ttf" | absURL }}');
     font-style: normal;
 }
 *,
@@ -828,7 +828,7 @@ h1 svg {
     position: absolute;
     margin-top: 0;
     top: 0;
-    line-height: 1;
+    line-height: 0;
     left: -1em;
     border: 0;
 }
@@ -1044,7 +1044,7 @@ h1 svg {
     background: rgba(0,0,0,.8);
     color: #fefefe;
 }
-  
+
 ::selection {
   background: rgba(0,0,0,.8);
   color: #fefefe;
