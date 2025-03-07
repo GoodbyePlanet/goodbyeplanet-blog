@@ -29,9 +29,3 @@ hugo server
 ### Licence & copyright
 
 All rights to the **Mother Earth**
-
-
-### Acknowledgments
-
-Thanks to 
-  Gustavo Paz for amazing font
