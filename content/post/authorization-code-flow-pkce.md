@@ -19,7 +19,7 @@ The request contains:
 - scope=contacts → Requesting permission to access the user's contacts.
 - redirect_uri=https://messenger.app.com/redirect_uri → URL to redirect after authorization.
 - state=some_state → State that can be passed from client to Authorization Server (example: To remember from which page user came)
-- code_challenge=... & code_challenge_method=sha256 → PKCE mechanism to enable *Public Client* to securely authenticate on
+- code_challenge=1GdfTujiO45FrtH & code_challenge_method=sha256 → PKCE mechanism to enable *Public Client* to securely authenticate on
 *Authorization Server* when requesting an access token. *Client app* generates **code_verifier** (random string between 43 and 128 chars)
 then it uses **code_challenge_method** in this case SHA256 algorithm to calculate a new value, and then it uses **base64** function to
 finally calculates **code_challenge**.
@@ -36,7 +36,7 @@ The request includes:
 - grant_type=authorization_code → Required when exchanging authorization code for an access token.
 - redirect_uri → Required parameter when requesting an access token.
 - code=ghtWe23Dafd$3ad → Authorization code that *Client app* obtained in the previous step. 
-- code_verifier=... → Code that *Public app* created and used to generate code_challenge param. This param is used by
+- code_verifier=asdf123avafr → Code that *Public app* created and used to generate code_challenge param. This param is used by
 *Authorization Server* to calculate **code_challenge** itself, and to verify if **code_challenge** sent in previous request is same.
 If it is same then *Client app* is successfully authenticated on *Authorization Server*. Next *Authorization Server*
 checks if **code=ghtWe23Dafd$3ad** is valid, and if yes it returns response with and **access token**.
@@ -44,3 +44,5 @@ checks if **code=ghtWe23Dafd$3ad** is valid, and if yes it returns response with
 Next *Client app* sends an access token in request to *Resource Server* (contacts.google.com). *Resource Server* will then
 check validity of access token by calling **POST /oauth2/introspect** endpoint (Token introspection) on *Authorization Server*.
 If access token is valid it will return Users Gmail contacts, if not valid it will return 403 Forbidden response.
+
+Resources: https://example-app.com/pkce (Generate code_challenge)
