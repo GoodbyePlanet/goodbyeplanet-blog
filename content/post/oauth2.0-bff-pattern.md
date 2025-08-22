@@ -6,8 +6,6 @@ authors:
   - Nemanja
 ---
 
-## Securing Your Web Apps: Spring Security OAuth 2.0 + BFF Pattern: A Complete Implementation Guide
-
 ### Introduction
 
 In this blog post I will give you an example of how to implement OAuth 2.0 backend including BFF (Backend For Frontend) for
@@ -70,7 +68,7 @@ while delegating all security-sensitive operations like token management to the 
 
 #### Sequence Diagram
 
-```mermaid
+{{< mermaid >}}
 sequenceDiagram
     participant User
     participant FE as fe-client (React)
@@ -105,7 +103,7 @@ sequenceDiagram
     GW->>RS: Forward Request with access token
     RS-->>GW: Return Resource Data
     GW-->>FE: Return Response Data
-```
+{{< /mermaid >}}
 
 1. User initiates request through the frontend application
 2. Gateway checks Redis for a valid session
