@@ -16,14 +16,14 @@ When you log in, your device proves it holds the private key without ever reveal
 
 #### But how does it work?
 
-I've made some drawings in the excalidraw app. You can find it [here](https://excalidraw.com/#json=XCZD63knOjCI4r7wbpT0q,-l1ivEU__awervkwxUfHGQ).
+I've made some drawings in the excalidraw app. You can find it [here](https://excalidraw.com/#json=Kz4Q-NKXP2ci4vGRumv67,HYysP56zaTfY9F29qlzI9g).
 Or look at the images below.
 
 Registration flow:
-[![Click to zoom](/images/passkeys-registration.png)](/images/passkeys-registration.png)
+[![Click to zoom](/images/passkeys-registration-flow.png)](/images/passkeys-registration-flow.png)
 
 Authentication flow:
-[![Click to zoom](/images/passkeys-authentication.png)](/images/passkeys-authentication.png)
+[![Click to zoom](/images/passkeys-authentication-flow.png)](/images/passkeys-authentication-flow.png)
 
 I've implemented passkey service using Golang, you can find it [here](https://github.com/GoodbyePlanet/passkey-service).
 
