@@ -13,7 +13,10 @@ external data source.
 [![Click to zoom](/images/rag.png)](/images/rag.png)
 
 This is a traditional RAG system that uses bi-encoders for retrieval, which enables fast similarity search but can lead
-to information loss because documents are embedded without query context. Ok, but what does "information loss" mean?
+to information loss because documents are embedded without query context.
+
+Ok, but what does "information loss" mean?
+
 Bi-encoder has to produce one vector that “represents all possible meanings” for each text chunk. This results in a
 summary of the text chunk in vector form — basically the model guesses what’s important. Later on when we have the user 
 query, we use the same bi-encoder to create a query vector, and we do similarity search between the query vector and the 
