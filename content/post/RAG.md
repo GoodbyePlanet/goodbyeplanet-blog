@@ -26,3 +26,5 @@ information.
 
 This limitation can be addressed using a cross-encoder, which scores the relevance of a text chunk
 **in the context of the query**. Let's see how that works in the next post.
+
+Learn about Embeddings in this [post](https://goodbyeplanet-blog.vercel.app/post/embeddings/).
