@@ -1,33 +1,45 @@
 {{ define "main" }}
 <main id="main">
-  <h1>{{ .Title }}</h1>
-  {{ if site.Params.search }}
-  <input
-          id="search"
-          type="text"
-          placeholder="{{ T "search_placeholder" }}"
-  aria-label="{{ T "search_aria_label" }}"
-  />
-  {{ end }}
-
-  {{ $tag := .Title }}
-  {{ $filteredPages := where .Site.RegularPages "Type" "in" (slice "post") }}
-
-  {{ if and $tag (ne $tag "Blog") }}
-    {{ $filteredPages = where $filteredPages "Params.tags" "intersect" (slice $tag) }}
-  {{ end }}
-
-  {{ range $filteredPages.GroupByDate "2006" }}
-  <h3>{{ .Key }}</h3>
-  <ul class="patterns-list" id="list">
-    {{ range .Pages.ByPublishDate.Reverse }}
-    <li>
-      <a href="{{ .RelPermalink }}">
-        {{ .Title }}
-      </a>
-    </li>
+    <h1>{{ .Title }}</h1>
+    {{ if site.Params.search }}
+    <input
+            id="search"
+            type="text"
+            placeholder="{{ T "search_placeholder" }}"
+    aria-label="{{ T "search_aria_label" }}"
+    />
     {{ end }}
-  </ul>
-  {{ end }}
+
+    {{ $tag := .Title }}
+    {{ $filteredPages := where .Site.RegularPages "Type" "in" (slice "post") }}
+
+    {{ if and $tag (ne $tag "Blog") }}
+    {{ $filteredPages = where $filteredPages "Params.tags" "intersect" (slice $tag) }}
+    {{ end }}
+
+    <div class="posts-grid">
+        {{ range $filteredPages.ByPublishDate.Reverse }}
+        <article class="post-card">
+            <a href="{{ .RelPermalink }}">
+                <div class="post-image">
+                    {{ $image := .Resources.GetMatch "featured-image*" }}
+                    {{ if not $image }}
+                    {{ $image = .Resources.GetMatch "{*.jpg,*.png,*.webp}" }}
+                    {{ end }}
+                    {{ with $image }}
+                    <img src="{{ .RelPermalink }}" alt="{{ $.Title }}">
+                    {{ else }}
+                    {{/* Fallback if no image found in page bundle */}}
+                    <div class="placeholder-image"></div>
+                    {{ end }}
+                </div>
+                <div class="post-content">
+                    <h2 class="post-title">{{ .Title }}</h2>
+                    <time class="post-date">{{ .Date.Format "January, 2006" }}</time>
+                </div>
+            </a>
+        </article>
+        {{ end }}
+    </div>
 </main>
 {{ end }}
