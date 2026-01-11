@@ -5,17 +5,35 @@
     padding: 1rem 0;
 }
 
-.post-card a {
-    text-decoration: none;
-    color: inherit;
-    display: block;
+.post-image {
+    width: 100%;
+    /* Forces the container to always be the same height (16:9 ratio) */
+    aspect-ratio: 16 / 9;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .post-image img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    /* 'contain' shows the whole image without cropping,
+       'cover' fills the box but might crop slightly */
     object-fit: contain;
-    border-radius: 8px;
+}
+
+.post-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.post-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
 }
 
 .post-title {
