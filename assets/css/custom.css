@@ -1,0 +1,49 @@
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+    gap: 2rem;
+    padding: 1rem 0;
+}
+
+.post-image {
+    width: 100%;
+    /* Forces the container to always be the same height (16:9 ratio) */
+    aspect-ratio: 16 / 9;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.post-image img {
+    width: 100%;
+    height: 100%;
+    /* 'contain' shows the whole image without cropping,
+       'cover' fills the box but might crop slightly */
+    object-fit: contain;
+}
+
+.post-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.post-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.post-title {
+    font-size: 1.1rem;
+    margin: 1rem 0 0.2rem 0;
+    line-height: 1.3;
+    font-weight: 500;
+}
+
+.post-date {
+    font-size: 0.85rem;
+    color: #666;
+}
