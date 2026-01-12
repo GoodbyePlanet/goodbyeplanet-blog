@@ -1,7 +1,7 @@
 ---
 title: "Embeddings"
 date: 2026-01-07
-tags: [AI, Embeddings, Vectors]
+tags: [AI, Embeddings, Vectors, RAG]
 authors:
     - Nemanja
 ---
