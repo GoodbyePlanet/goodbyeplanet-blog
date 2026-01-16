@@ -8,10 +8,9 @@
 .post-image {
     width: 100%;
     aspect-ratio: 16 / 9;
-    background-color: #eee; /* Light gray placeholder color */
+    background-color: #eee;
     border-radius: 4px;
     overflow: hidden;
-    /* Optional: subtle animation when image appears */
 }
 
 .post-image img {
