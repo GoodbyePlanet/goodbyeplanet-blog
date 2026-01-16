@@ -26,10 +26,19 @@
                     {{ if not $image }}
                     {{ $image = .Resources.GetMatch "{*.jpg,*.png,*.webp}" }}
                     {{ end }}
+
                     {{ with $image }}
-                    <img src="{{ .RelPermalink }}" alt="{{ $.Title }}">
+                    {{/* Process image: Resize to max 600px width and convert to WebP */}}
+                    {{ $processed := .Resize "600x webp" }}
+                    <img
+                            src="{{ $processed.RelPermalink }}"
+                            width="{{ $processed.Width }}"
+                            height="{{ $processed.Height }}"
+                            alt="{{ $.Title }}"
+                            loading="lazy"
+                            decoding="async"
+                    >
                     {{ else }}
-                    {{/* Fallback if no image found in page bundle */}}
                     <div class="placeholder-image"></div>
                     {{ end }}
                 </div>
