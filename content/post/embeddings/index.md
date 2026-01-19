@@ -30,7 +30,7 @@ A standard embedding usually has between 768 and 1,536 dimensions.
 High-dimensional vector space means the AI represents text using many numbers.
 Each number captures a small aspect of meaning, such as emotion, topic, or context.
 Having many dimensions gives the AI enough space to understand subtle differences and prevents *crowding*,
-where different ideas are forced too close together and become mixed up
+where different ideas are forced too close together and become mixed up.
 
 **Simple Market Analogy**:
 

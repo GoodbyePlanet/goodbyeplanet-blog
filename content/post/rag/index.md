@@ -6,6 +6,8 @@ authors:
     - Nemanja
 ---
 
+[![Click to zoom](rag.png)](rag.png)
+
 RAG (Retrieval-Augmented Generation) is a technique that addresses the limitation of LLMs not having domain-specific
 or up-to-date knowledge by augmenting the model’s responses with relevant information retrieved from an
 external data source.
