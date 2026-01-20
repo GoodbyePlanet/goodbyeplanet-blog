@@ -39,18 +39,32 @@
   <style id="darkTheme">
     .intro-and-nav,
     .main-and-footer {
-      filter: invert(100%);
+        background-color: #1a1b1e;
+        color: #d1d1d1;
     }
 
     * {
-      background-color: inherit
+        background-color: inherit;
+        color: inherit;
+        border-color: #333;
+    }
+
+    a {
+        color: #d0d3da;
+    }
+
+    .cmd,
+    pre,
+    code {
+        background-color: #25262b;
+        border-color: #444;
     }
 
     img:not([src*=".svg"]),
     .colors,
     iframe,
     .demo-container {
-      filter: invert(0);
+        opacity: 0.9;
     }
   </style>
 
