@@ -22,8 +22,12 @@ But why do we need it?
 
 Most embedding models used to create embeddings are bi-encoders.
 Bi-encoders embed documents independently, without knowing the user’s query.
-As a result, important query-specific details may not be emphasized in the embedding, which can reduce retrieval accuracy.
-When searching a vector database, this can cause relevant documents to be ranked lower or missed entirely.
+As a result, retrieval is fast, but important query-specific details may not be emphasized in the embedding,
+which can reduce retrieval accuracy. When searching a vector database, this can cause relevant documents
+to be ranked lower or missed entirely.
+
+To address this gap between fast retrieval and good accuracy, modern RAG systems introduce a reranking step, where a 
+smaller set of retrieved documents is re-evaluated using more accurate models that apply deeper, query-aware reasoning.
 
 Types of reranking models:
 
@@ -40,15 +44,11 @@ reranking combines these signals into a weighted score to produce better ranking
 
   Examples:
 
-  A newer document may be better than an older one.
- 
-  An official source may be better than a random blog.
-   
-  A document that mentions exact keywords may be more useful.
-
-  A short, precise chunk may be better than a long one.
-
-  So instead of relying on one score, we combine multiple signals. That’s hybrid / metadata-aware reranking.
+  - A newer document may be better than an older one.
+  - An official source may be better than a random blog.
+  - A document that mentions exact keywords may be more useful.
+  - A short, precise chunk may be better than a long one.
+  - So instead of relying on one score, we combine multiple signals. That’s hybrid / metadata-aware reranking.
 
   Semantic relevance (reranker score), Keyword relevance (exact match), Recency, source trust, popularity.
   **Final ranking = weighted combination**.
