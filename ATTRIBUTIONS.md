@@ -6,8 +6,8 @@ Huge thanks to all creators for sharing their work.
 ---
 
 ## Earth
-- Author: Mr. SodaCanVR
-- Source: https://sketchfab.com/aiddaudelinae59f9ea1af64faa
+- Author: Harmony Monroe
+- Source: https://sketchfab.com/HarmonyMonroe
 - License: CC Attribution
 - Changes: Changed colors on the earth model
 
