@@ -48,3 +48,23 @@
     from { opacity: 0; }
     to { opacity: 1; }
 }
+
+/* Force white code block backgrounds (Prism) */
+pre[class*="language-"],
+code[class*="language-"] {
+    background: #fff !important;
+    color: #111;
+    text-shadow: none;
+}
+
+/* If your markup uses Hugo/Chroma wrapper */
+.highlight pre,
+.highlight code {
+    background: #fff !important;
+    color: #111;
+}
+
+/* Optional: keep borders consistent with your site */
+pre[class*="language-"] {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}

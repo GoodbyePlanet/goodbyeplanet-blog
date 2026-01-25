@@ -6,7 +6,7 @@ authors:
   - Nemanja
 ---
 
-### Introduction
+#### Introduction
 
 In this blog post I will give you an example of how to implement OAuth 2.0 backend including BFF (Backend For Frontend) for
 browser-based applications using Spring Security OAuth 2.0 authorization server, Spring Cloud Gateway for BFF,
@@ -28,7 +28,7 @@ The browser only receives a secure, HTTP-only session cookie for BFF communicati
 significantly reducing the application's attack surface and aligning with OAuth 2.0 security best practices.
 [More on BFF architecture in context of OAuth 2.0](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps#section-6.1.1)
 
-### Implementation of OAuth 2.0 backend with BFF pattern
+#### Implementation of OAuth 2.0 backend with BFF pattern
 
 Complete code can be found in this [Github repository](https://github.com/GoodbyePlanet/spring-cg-bff)
 If you want to try it out just follow the steps in README.md.

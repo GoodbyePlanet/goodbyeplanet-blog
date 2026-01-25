@@ -9,17 +9,17 @@ authors:
 If you're Web developer you've probably been in the position where you have to update outdated
 dependencies from your **package.json**. You could run
 
-{{< cmd >}}
+```shell
 npm outdated
-{{</ cmd >}}
+```
 
 to get all outdated dependencies, and then use *npm install* to install each dependency one by one.
 But this is just annoying to do.
 What I'll do instead is the following:
 
-{{< cmd >}}
+```shell
 npm outdated --parseable | cut -f4 -d: | grep "@types" | xargs npm install
-{{</ cmd >}}
+```
 
 This will execute outdated with *parsable* argument, so I can pipe it to *cut* to get right column and then pipe it to
 *grep* which will find dependencies with specific name I want to update, in this case I want to update all *Typescript* types

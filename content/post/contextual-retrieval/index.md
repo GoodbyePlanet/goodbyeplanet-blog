@@ -52,7 +52,7 @@ context *before* retrieval using two techniques:
 
 Anthropic already has prepared a template to use when embedding chunks, and it looks like this:
 
-```shell
+```html
 <document>
 {{WHOLE_DOCUMENT}}
 </document>

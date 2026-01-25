@@ -568,7 +568,6 @@ figcaption::before {
 /* Code blocks */
 pre[class*=language-] {
     background: none;
-    margin-top: 2.25rem;
     margin-bottom: 0;
     overflow-y: hidden;
     overflow-x: auto;
@@ -597,7 +596,6 @@ pre[class*=language-] code * {
 }
 .highlight {
     background: #ddd;
-    padding: 0.0625rem 0.33rem;
     border-radius: 0.5rem;
 }
 .numbered .highlight::after,
@@ -821,11 +819,13 @@ h1 svg {
 
 /* Section links */
 .h2-container {
-    position: relative;
-    font-size: 1.66rem;
+    font-size: 1.4rem;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
 }
+
 .h2-container a {
-    position: absolute;
     margin-top: 0;
     top: 0;
     line-height: 0;

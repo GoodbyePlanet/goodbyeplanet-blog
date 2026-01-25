@@ -70,8 +70,7 @@
 
         var link = document.createElement('a');
         link.setAttribute('href', '#' + id);
-        link.innerHTML = '<svg aria-hidden="true" class="link-icon" viewBox="0 0 50 50" focusable="false"> <use href="#link"></use> </svg>';
-
+        link.innerHTML = '<svg aria-hidden="true" class="link-icon" viewBox="0 0 50 50" focusable="false"><use href="#rocket"></use></svg>';
         container.appendChild(link);
 
         heading.parentNode.removeChild(heading);
