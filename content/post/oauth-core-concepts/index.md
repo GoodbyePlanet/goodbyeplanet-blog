@@ -10,7 +10,7 @@ authors:
 
 Let's explore core OAuth 2.0 concepts.
 
-### Main Entities
+#### Main Entities
 **Resource Owner** – The user who owns the data and grants access.
 
 **Client** – The application requesting access on behalf of the user.
@@ -21,12 +21,12 @@ Let's explore core OAuth 2.0 concepts.
 
 **Resource Server** – Hosts protected resources and validates access tokens.
 
-### Protocol Endpoints
+#### Protocol Endpoints
 **Authorization Endpoint** – Where the user authenticates and grants access to get authorization code.
 
 **Token Endpoint** – Where the client exchanges an authorization code for an access token.
 
-### Authorization Grant Types
+#### Authorization Grant Types
 **Authorization Code** - with PKCE extension for security.
 
 **Client Credentials** - for machine-to-machine authentication.
@@ -37,19 +37,19 @@ Let's explore core OAuth 2.0 concepts.
 
 **Implicit** - deprecated grant type (instead authorization code flow should be used) - [Is Implicit flow dead](https://developer.okta.com/blog/2019/05/01/is-the-oauth-implicit-flow-dead)
 
-### Tokens
+#### Tokens
 **Access Token** – Short-lived credential to access protected resources.
 - JWT - token that carries necessary information
 - Opaque - A random, non-guessable string (e.g., UUID, hash, or encrypted token)
 
 **Refresh Token** – Used to obtain new access tokens.
 
-### Proof Key for Code Exchange (PKCE)
+#### Proof Key for Code Exchange (PKCE)
 Used to enhance security for public clients (e.g., mobile & SPAs).
 Requires a code_verifier (random string between 43–128 chars).
 A code_challenge is derived from the verifier using SHA-256 & base64.
 
-### Token Introspection & Revocation
+#### Token Introspection & Revocation
 **Token Introspection** - Allows resource servers to validate token status by querying the authorization server.
 
 **Token Revocation** - A client can explicitly invalidate a refresh token (or access token) before it expires.

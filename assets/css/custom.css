@@ -57,14 +57,12 @@ code[class*="language-"] {
     text-shadow: none;
 }
 
-/* If your markup uses Hugo/Chroma wrapper */
 .highlight pre,
 .highlight code {
     background: #fff !important;
     color: #111;
 }
 
-/* Optional: keep borders consistent with your site */
 pre[class*="language-"] {
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgb(0, 26, 75);
 }

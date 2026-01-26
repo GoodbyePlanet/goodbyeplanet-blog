@@ -4,7 +4,7 @@ code[class*=language-], pre[class*=language-] {
     color: #fff;
     background: 0 0;
     text-shadow: 0 -.1em .2em #000;
-    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 1em;
     text-align: left;
     white-space: pre;
