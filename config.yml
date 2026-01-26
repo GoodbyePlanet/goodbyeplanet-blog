@@ -6,6 +6,7 @@ theme: cupper-hugo-theme
 
 params:
   footer: "**GoodbyePlanet blog** is created by [GoodbyePlanet](https://github.com/GoodbyePlanet). All rights to the **Mother Earth**."
+  search: false
 
 taxonomies:
   tag: tags
@@ -25,3 +26,6 @@ menu:
     - name: Contribute
       url: /contribute/
       weight: 4
+    - name: RSS
+      url: /index.xml
+      weight: 5
