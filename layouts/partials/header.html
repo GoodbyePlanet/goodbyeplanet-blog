@@ -1,36 +1,11 @@
 <header class="intro-and-nav" role="banner">
-  <div>
-    <div class="intro center">
-<!--      <a-->
-<!--        class="logo"-->
-<!--        href="{{ .Site.BaseURL }}"-->
-<!--        aria-label="{{ .Site.Title }} home page"-->
-<!--      >-->
-<!--        {{ with .Site.Params.navTitleText }}-->
-<!--          <h1>{{ . }}</h1>-->
-<!--        {{ else }}-->
-<!--          <img-->
-<!--            src="{{ "images/goodbyeplanet.png" | relURL }}"-->
-<!--            alt="{{ .Site.Params.logoAlt | default "Logo" }}"-->
-<!--          >-->
-<!--        {{ end }}-->
-<!--      </a>-->
-        <div class="logo">
-<!--            <a href="{{ "/" | absURL }}">-->
-            <model-viewer src="{{ "/images/rocket.glb" | absURL }}"
-                shadow-intensity="0.1"
-                autoplay
-                style="width: 100%; height: 200px; background-color: transparent;">
-            </model-viewer>
-<!--            </a>-->
-        </div>
-      <p class="library-desc">
-        {{ with .Site.Params.description }} {{ . | markdownify }} {{ end }}
-      </p>
+    <div class="left-rocket-only">
+        <iframe
+                src="{{ "rocket/" | relURL }}"
+        title="Rocket animation"
+        style="width: 100%; height: 100vw; border: 0; background: transparent;"
+        scrolling="no"
+        loading="eager"
+        ></iframe>
     </div>
-    {{ partial "nav.html" . }}
-    {{ if eq .Site.Params.moveFooterToHeader true }}
-      {{ partial "footer.html" . }}
-    {{ end }}
-  </div>
 </header>

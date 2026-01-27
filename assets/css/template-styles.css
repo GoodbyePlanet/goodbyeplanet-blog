@@ -336,7 +336,7 @@ caption {
     border-right: 2px solid;
 }
 .intro-and-nav > div {
-    padding: 2.25rem;
+    /*padding: 2.25rem;*/
     display: flex;
     flex-direction: column;
     height: 100%;
