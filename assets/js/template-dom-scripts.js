@@ -139,8 +139,8 @@
     });
 
     /**
-     * Sends current site theme to the rocket iframe (no reload).
-     * Expects localStorage key: darkTheme = 'true' | 'false'
+     * Sends current site theme to the rocket iframe.
+     * Important: send again on iframe load (otherwise message can be missed on refresh).
      */
     function syncRocketIframeTheme() {
         const iframe = document.getElementById('rocket-iframe');
@@ -148,12 +148,20 @@
 
         const theme = (localStorage.getItem('darkTheme') === 'true') ? 'dark' : 'light';
 
-        if (!iframe.contentWindow) {
-            iframe.addEventListener('load', () => syncRocketIframeTheme(), { once: true });
-            return;
+        const send = () => {
+            if (!iframe.contentWindow) return;
+            iframe.contentWindow.postMessage({ type: 'set-theme', theme }, '*');
+        };
+
+        if (iframe.dataset.themeSyncHooked !== 'true') {
+            iframe.dataset.themeSyncHooked = 'true';
+            iframe.addEventListener('load', () => {
+                send();
+            });
         }
 
-        iframe.contentWindow.postMessage({ type: 'set-theme', theme }, '*');
+        // Best effort immediate send (works when iframe already loaded)
+        send();
     }
 
     function showTheme() {
@@ -166,6 +174,7 @@
         }
         syncRocketIframeTheme();
     }
+
   function showContent() {
     document.body.style.visibility = 'visible';
     document.body.style.opacity = 1;

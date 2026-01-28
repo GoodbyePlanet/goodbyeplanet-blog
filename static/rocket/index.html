@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rocket Launch - Pure Grayscale</title>
+    <script>
+        (function () {
+            try {
+                const isDark = localStorage.getItem('darkTheme') === 'true';
+                document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            } catch (e) {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        }());
+    </script>
     <style>
         /* Theme variables (default = dark). Rocket iframe will switch by setting html[data-theme]. */
         :root {
@@ -308,7 +318,7 @@
 <script>
     // Default theme if parent doesn't message us yet:
     // keep 'dark' as the default since you said rocket currently uses dark theme.
-    document.documentElement.setAttribute('data-theme', 'light');
+    // document.documentElement.setAttribute('data-theme', 'light');
 
     // Listen for parent theme toggle
     window.addEventListener('message', (event) => {
