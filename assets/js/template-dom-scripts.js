@@ -96,57 +96,76 @@
 
 /* Switch and persist theme */
 (function () {
-  var checkbox = document.getElementById('themer');
+    var checkbox = document.getElementById('themer');
 
-  function persistTheme(val) {
-    localStorage.setItem('darkTheme', val);
-  }
-
-  function applyDarkTheme() {
-    var darkTheme = document.getElementById('darkTheme');
-    darkTheme.disabled = false;
-  }
-
-  function clearDarkTheme() {
-    var darkTheme = document.getElementById('darkTheme');
-    darkTheme.disabled = true;
-  }
-
-  function defaultDarkTheme() {
-{{- with .Site.Params.defaultDarkTheme }}
-    if (localStorage.getItem('darkTheme') == null) {
-      persistTheme('true');
-      checkbox.checked = true;
+    function persistTheme(val) {
+        localStorage.setItem('darkTheme', val);
+        syncRocketIframeTheme();
     }
-{{- else }}
-    if (localStorage.getItem('darkTheme') == null) {
-      persistTheme('false');
-      checkbox.checked = false;
-    }
-{{ end }}
-  }
 
-  checkbox.addEventListener('change', function () {
-    defaultDarkTheme();
-    if (this.checked) {
-      applyDarkTheme();
-      persistTheme('true');
-    } else {
-      clearDarkTheme();
-      persistTheme('false');
+    function applyDarkTheme() {
+        var darkTheme = document.getElementById('darkTheme');
+        darkTheme.disabled = false;
     }
-  });
 
-  function showTheme() {
-    if (localStorage.getItem('darkTheme') === 'true') {
-      applyDarkTheme();
-      checkbox.checked = true;
-    } else {
-      clearDarkTheme();
-      checkbox.checked = false;
+    function clearDarkTheme() {
+        var darkTheme = document.getElementById('darkTheme');
+        darkTheme.disabled = true;
     }
-  }
 
+    function defaultDarkTheme() {
+        {{- with .Site.Params.defaultDarkTheme }}
+        if (localStorage.getItem('darkTheme') == null) {
+            persistTheme('true');
+            checkbox.checked = true;
+        }
+        {{- else }}
+        if (localStorage.getItem('darkTheme') == null) {
+            persistTheme('false');
+            checkbox.checked = false;
+        }
+        {{ end }}
+    }
+
+    checkbox.addEventListener('change', function () {
+        defaultDarkTheme();
+        if (this.checked) {
+            applyDarkTheme();
+            persistTheme('true');
+        } else {
+            clearDarkTheme();
+            persistTheme('false');
+        }
+    });
+
+    /**
+     * Sends current site theme to the rocket iframe (no reload).
+     * Expects localStorage key: darkTheme = 'true' | 'false'
+     */
+    function syncRocketIframeTheme() {
+        const iframe = document.getElementById('rocket-iframe');
+        if (!iframe) return;
+
+        const theme = (localStorage.getItem('darkTheme') === 'true') ? 'dark' : 'light';
+
+        if (!iframe.contentWindow) {
+            iframe.addEventListener('load', () => syncRocketIframeTheme(), { once: true });
+            return;
+        }
+
+        iframe.contentWindow.postMessage({ type: 'set-theme', theme }, '*');
+    }
+
+    function showTheme() {
+        if (localStorage.getItem('darkTheme') === 'true') {
+            applyDarkTheme();
+            checkbox.checked = true;
+        } else {
+            clearDarkTheme();
+            checkbox.checked = false;
+        }
+        syncRocketIframeTheme();
+    }
   function showContent() {
     document.body.style.visibility = 'visible';
     document.body.style.opacity = 1;
@@ -157,5 +176,4 @@
     showTheme();
     showContent();
   });
-
 }());
