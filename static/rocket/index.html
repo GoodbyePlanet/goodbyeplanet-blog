@@ -7,31 +7,6 @@
     <style>
         /* Theme variables (default = dark). Rocket iframe will switch by setting html[data-theme]. */
         :root {
-            /* Background (dark) */
-            --bg-color: #21242c;
-            --bg-gradient: #353942;
-
-            /* Earth (dark-ish) */
-            --earth-base: #050a10;
-            --earth-detail: #1a1a1a;
-            --earth-atmosphere: rgba(255, 255, 255, 0.06);
-
-            /* Rocket */
-            --rocket-body: #e6e6e6;
-            --rocket-shadow: #999999;
-            --rocket-dark: #151515;
-            --rocket-window-rim: #777777;
-            --rocket-window-glass: #0f0f0f;
-            --rocket-flame: #ffffff;
-
-            /* Particles */
-            --star-color: #ffffff;
-            --sprinkle-color: #ffffff;
-            --sprinkle-shadow: rgba(255, 255, 255, 0.35);
-        }
-
-        /* LIGHT THEME PALETTE */
-        html[data-theme="light"] {
             /* Background */
             --bg-color: #ffffff;
             --bg-gradient: #f3f3f3;
@@ -53,6 +28,32 @@
             --star-color: #000000;
             --sprinkle-color: #000000;
             --sprinkle-shadow: rgba(0, 0, 0, 0.25);
+        }
+
+        /* DARK THEME PALETTE */
+        html[data-theme="dark"] {
+            /* Background (dark) */
+            --bg-color: #21242c;
+            --bg-gradient: #353942;
+
+            /* Earth (dark-ish) */
+            --earth-base: #050a10;
+            --earth-detail: #1a1a1a;
+            --earth-atmosphere: rgba(255, 255, 255, 0.06);
+
+            /* Rocket */
+            --rocket-body: #e6e6e6;
+            --rocket-shadow: #999999;
+            --rocket-dark: #151515;
+            --rocket-window-rim: #777777;
+            --rocket-window-glass: #0f0f0f;
+            --rocket-flame: #ffffff;
+
+            /* Particles */
+            --star-color: #ffffff;
+            --sprinkle-color: #ffffff;
+            --sprinkle-shadow: rgba(255, 255, 255, 0.35);
+
         }
 
         body, html {
@@ -307,7 +308,7 @@
 <script>
     // Default theme if parent doesn't message us yet:
     // keep 'dark' as the default since you said rocket currently uses dark theme.
-    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.setAttribute('data-theme', 'light');
 
     // Listen for parent theme toggle
     window.addEventListener('message', (event) => {
