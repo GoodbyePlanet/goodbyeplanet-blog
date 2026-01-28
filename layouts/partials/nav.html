@@ -7,7 +7,7 @@
     {{ T "nav_button_menu" }}
   </button>
   {{ $current := . }}
-  <ul id="patterns-list">
+  <ul id="patterns-list" class="nav-list-top">
   {{ range .Site.Menus.nav }}
     <li class="pattern">
       {{ $active := or ($current.IsMenuCurrent "nav" .) ($current.HasMenuCurrent "nav" .) }}
@@ -16,9 +16,9 @@
       {{ $active = or $active (and (eq .Name "Tags") (eq $current.Section "tags")) }}
       {{ $active = or $active (and $current.IsHome (or (eq .URL "/") (eq .URL $current.RelPermalink))) }}
         <a href="{{ .URL }}" {{ if $active }}aria-current="page"{{ end }}>
-        <svg class="bookmark-icon" aria-hidden="true" focusable="false" viewBox="0 0 40 50">
+<!--        <svg class="bookmark-icon" aria-hidden="true" focusable="false" viewBox="0 0 40 50">-->
 <!--          <use href="#rocket"></use>-->
-        </svg>
+<!--        </svg>-->
         <span class="text">{{ .Name }}</span>
       </a>
     </li>
