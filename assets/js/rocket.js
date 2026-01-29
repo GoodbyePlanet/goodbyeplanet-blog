@@ -10,15 +10,12 @@
     }
 
     function setThemeOnRocketRoot(root, theme) {
-        // Prefer scoping theme to the rocket root to avoid affecting site CSS.
-        // Your rocket CSS should use: .rocket-scene[data-theme="dark"] { ... }
         root.setAttribute("data-theme", theme);
     }
 
     function buildStars(starContainer) {
         if (!starContainer) return;
 
-        // Clear if this is re-initialized (e.g., in partial hot reload)
         starContainer.textContent = "";
 
         for (let i = 0; i < STAR_COUNT; i++) {
@@ -93,8 +90,6 @@
         const dur = Math.random() * 0.7 + 0.6;
         s.style.animation = `tumbleFall ${dur}s linear forwards`;
 
-        // Ensure positioning is relative to the rocket root box.
-        // Your CSS should set `.rocket-scene { position: relative; overflow: hidden; }`
         root.appendChild(s);
 
         window.setTimeout(() => s.remove(), dur * 1000 + 120);
