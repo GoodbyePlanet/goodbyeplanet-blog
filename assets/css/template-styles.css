@@ -950,7 +950,7 @@ h1 svg {
         border-right: none;
     }
     .intro-and-nav > div {
-        padding: 1.5rem;
+        padding: 0;
     }
     .main-and-footer {
         margin: 0;
