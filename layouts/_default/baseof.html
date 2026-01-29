@@ -11,6 +11,7 @@
       {{ partial "header.html" . }}
       <div class="main-and-footer">
         <div class="main-content">
+            {{ partial "nav.html" . }}
           {{ block "main" . }}{{ end }}
           {{ if ne .Site.Params.moveFooterToHeader true }}
             {{ partial "footer.html" . }}

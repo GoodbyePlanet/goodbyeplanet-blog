@@ -95,56 +95,64 @@
 }());
 
 /* Switch and persist theme */
-(function () {
+(function() {
   var checkbox = document.getElementById('themer');
 
   function persistTheme(val) {
-    localStorage.setItem('darkTheme', val);
+      localStorage.setItem('darkTheme', val);
   }
 
   function applyDarkTheme() {
-    var darkTheme = document.getElementById('darkTheme');
-    darkTheme.disabled = false;
+      var darkTheme = document.getElementById('darkTheme');
+      darkTheme.disabled = false;
   }
 
   function clearDarkTheme() {
-    var darkTheme = document.getElementById('darkTheme');
-    darkTheme.disabled = true;
+      var darkTheme = document.getElementById('darkTheme');
+      darkTheme.disabled = true;
+  }
+
+  function setDocumentThemeAttr() {
+      // Keep a single source of truth the rocket (and anything else) can read.
+      var isDark = localStorage.getItem('darkTheme') === 'true';
+      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
   }
 
   function defaultDarkTheme() {
-{{- with .Site.Params.defaultDarkTheme }}
-    if (localStorage.getItem('darkTheme') == null) {
-      persistTheme('true');
-      checkbox.checked = true;
-    }
-{{- else }}
-    if (localStorage.getItem('darkTheme') == null) {
-      persistTheme('false');
-      checkbox.checked = false;
-    }
-{{ end }}
+      {{- with .Site.Params.defaultDarkTheme }}
+      if (localStorage.getItem('darkTheme') == null) {
+          persistTheme('true');
+          checkbox.checked = true;
+      }
+      {{- else }}
+      if (localStorage.getItem('darkTheme') == null) {
+          persistTheme('false');
+          checkbox.checked = false;
+      }
+      {{ end }}
   }
 
-  checkbox.addEventListener('change', function () {
-    defaultDarkTheme();
-    if (this.checked) {
-      applyDarkTheme();
-      persistTheme('true');
-    } else {
-      clearDarkTheme();
-      persistTheme('false');
-    }
+  checkbox.addEventListener('change', function() {
+      defaultDarkTheme();
+      if (this.checked) {
+          applyDarkTheme();
+          persistTheme('true');
+      } else {
+          clearDarkTheme();
+          persistTheme('false');
+      }
+      setDocumentThemeAttr();
   });
 
   function showTheme() {
     if (localStorage.getItem('darkTheme') === 'true') {
-      applyDarkTheme();
-      checkbox.checked = true;
+        applyDarkTheme();
+        checkbox.checked = true;
     } else {
-      clearDarkTheme();
-      checkbox.checked = false;
+        clearDarkTheme();
+        checkbox.checked = false;
     }
+    setDocumentThemeAttr();
   }
 
   function showContent() {
@@ -157,5 +165,4 @@
     showTheme();
     showContent();
   });
-
 }());
