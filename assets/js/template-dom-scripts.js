@@ -95,85 +95,65 @@
 }());
 
 /* Switch and persist theme */
-(function () {
-    var checkbox = document.getElementById('themer');
+(function() {
+  var checkbox = document.getElementById('themer');
 
-    function persistTheme(val) {
-        localStorage.setItem('darkTheme', val);
-        syncRocketIframeTheme();
+  function persistTheme(val) {
+      localStorage.setItem('darkTheme', val);
+  }
+
+  function applyDarkTheme() {
+      var darkTheme = document.getElementById('darkTheme');
+      darkTheme.disabled = false;
+  }
+
+  function clearDarkTheme() {
+      var darkTheme = document.getElementById('darkTheme');
+      darkTheme.disabled = true;
+  }
+
+  function setDocumentThemeAttr() {
+      // Keep a single source of truth the rocket (and anything else) can read.
+      var isDark = localStorage.getItem('darkTheme') === 'true';
+      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  }
+
+  function defaultDarkTheme() {
+      {{- with .Site.Params.defaultDarkTheme }}
+      if (localStorage.getItem('darkTheme') == null) {
+          persistTheme('true');
+          checkbox.checked = true;
+      }
+      {{- else }}
+      if (localStorage.getItem('darkTheme') == null) {
+          persistTheme('false');
+          checkbox.checked = false;
+      }
+      {{ end }}
+  }
+
+  checkbox.addEventListener('change', function() {
+      defaultDarkTheme();
+      if (this.checked) {
+          applyDarkTheme();
+          persistTheme('true');
+      } else {
+          clearDarkTheme();
+          persistTheme('false');
+      }
+      setDocumentThemeAttr();
+  });
+
+  function showTheme() {
+    if (localStorage.getItem('darkTheme') === 'true') {
+        applyDarkTheme();
+        checkbox.checked = true;
+    } else {
+        clearDarkTheme();
+        checkbox.checked = false;
     }
-
-    function applyDarkTheme() {
-        var darkTheme = document.getElementById('darkTheme');
-        darkTheme.disabled = false;
-    }
-
-    function clearDarkTheme() {
-        var darkTheme = document.getElementById('darkTheme');
-        darkTheme.disabled = true;
-    }
-
-    function defaultDarkTheme() {
-        {{- with .Site.Params.defaultDarkTheme }}
-        if (localStorage.getItem('darkTheme') == null) {
-            persistTheme('true');
-            checkbox.checked = true;
-        }
-        {{- else }}
-        if (localStorage.getItem('darkTheme') == null) {
-            persistTheme('false');
-            checkbox.checked = false;
-        }
-        {{ end }}
-    }
-
-    checkbox.addEventListener('change', function () {
-        defaultDarkTheme();
-        if (this.checked) {
-            applyDarkTheme();
-            persistTheme('true');
-        } else {
-            clearDarkTheme();
-            persistTheme('false');
-        }
-    });
-
-    /**
-     * Sends current site theme to the rocket iframe.
-     * Important: send again on iframe load (otherwise message can be missed on refresh).
-     */
-    function syncRocketIframeTheme() {
-        const iframe = document.getElementById('rocket-iframe');
-        if (!iframe) return;
-
-        const theme = (localStorage.getItem('darkTheme') === 'true') ? 'dark' : 'light';
-
-        const send = () => {
-            if (!iframe.contentWindow) return;
-            iframe.contentWindow.postMessage({ type: 'set-theme', theme }, '*');
-        };
-
-        if (iframe.dataset.themeSyncHooked !== 'true') {
-            iframe.dataset.themeSyncHooked = 'true';
-            iframe.addEventListener('load', () => {
-                send();
-            });
-        }
-
-        // Best effort immediate send (works when iframe already loaded)
-        send();
-    }
-
-    function showTheme() {
-        if (localStorage.getItem('darkTheme') === 'true') {
-            applyDarkTheme();
-            checkbox.checked = true;
-        } else {
-            clearDarkTheme();
-            checkbox.checked = false;
-        }
-        syncRocketIframeTheme();
-    }
+    setDocumentThemeAttr();
+  }
 
   function showContent() {
     document.body.style.visibility = 'visible';

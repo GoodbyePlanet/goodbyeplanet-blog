@@ -3,6 +3,8 @@
 <script src="{{ $domScripts.RelPermalink }}"></script>  
 
 <script src="{{ "js/prism.js" | relURL }}"></script>
+{{ $rocket := resources.Get "js/rocket.js" | minify | fingerprint }}
+<script defer src="{{ $rocket.RelPermalink }}" integrity="{{ $rocket.Data.Integrity }}"></script>
 
 {{ if site.Params.search }}
 {{ $searchJs := resources.Get "js/search.js" | fingerprint }}
