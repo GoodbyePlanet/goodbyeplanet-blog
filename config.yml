@@ -23,9 +23,6 @@ menu:
     - name: Tags
       url: /tags/
       weight: 3
-    - name: Contribute
-      url: /contribute/
-      weight: 4
     - name: RSS
       url: /index.xml
-      weight: 5
+      weight: 4

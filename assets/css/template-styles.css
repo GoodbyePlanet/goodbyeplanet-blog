@@ -68,12 +68,7 @@ p img {
 figure p img {
     margin: 0;
 }
-:focus:not([tabindex="-1"]),
-[data-expands]:focus svg,
-.patterns a:focus .text,
-[for="themer"] :focus + [aria-hidden] {
-    outline: 4px solid #999;
-}
+
 a {
   outline-offset: 2px;
 }
@@ -246,20 +241,6 @@ button {
 label {
   display: inline-block;
   font-weight: bold;
-}
-[for="themer"] {
-  background: #111;
-  border-radius: 0.33em;
-  color: #fefefe;
-  padding: 0.25em 0.75em;
-  margin: 0.5rem;
-  cursor: pointer;
-}
-[for="themer"] [aria-hidden]::before {
-  content: 'off';
-}
-[for="themer"] :checked + [aria-hidden]::before {
-  content: 'on';
 }
 
 /* Tables */
@@ -1087,7 +1068,7 @@ h1 svg {
   }
 }
 
-::-moz-selection { /* Code for Firefox */
+::-moz-selection {
     background: rgba(0,0,0,.8);
     color: #fefefe;
 }

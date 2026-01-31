@@ -78,6 +78,32 @@ pre[class*="language-"] {
     min-width: max-content;
 }
 
+.theme-toggle__icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    place-items: center;
+    border-radius: 999px;
+}
+
+:root[data-theme="dark"] .theme-toggle__icon {
+    border-color: rgba(255, 255, 255, 0.16);
+}
+
+.theme-toggle__icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.25rem;
+}
+
+[for="themer"] {
+    border-radius: 0.33em;
+    color: #000000;
+    cursor: pointer;
+}
+
+:root[data-theme="dark"] [for="themer"] {
+    color: #ffffff;
+}
 
 /*ROCKET STYLES*/
 :root {
@@ -385,5 +411,9 @@ html[data-theme="dark"] {
         top: 80%;
         width: 250vw;
         height: 400vw;
+    }
+
+    .theme-toggle {
+        padding: 0.7rem;
     }
 }

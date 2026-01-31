@@ -16,12 +16,16 @@
       {{ $active = or $active (and (eq .Name "Tags") (eq $current.Section "tags")) }}
       {{ $active = or $active (and $current.IsHome (or (eq .URL "/") (eq .URL $current.RelPermalink))) }}
         <a href="{{ .URL }}" {{ if $active }}aria-current="page"{{ end }}>
-<!--        <svg class="bookmark-icon" aria-hidden="true" focusable="false" viewBox="0 0 40 50">-->
-<!--          <use href="#rocket"></use>-->
-<!--        </svg>-->
         <span class="text">{{ .Name }}</span>
       </a>
     </li>
   {{ end }}
+      <li class="pattern"
+          {{ if eq .Site.Params.showThemeSwitcher false }}style="display: none;"{{ end }}>
+          <label class="theme-toggle" for="themer" title="Toggle theme">
+              <input type="checkbox" id="themer" class="vh">
+              <span id="theme-icon" class="theme-toggle__icon" aria-hidden="true"></span>
+          </label>
+      </li>
   </ul>
 </nav>
