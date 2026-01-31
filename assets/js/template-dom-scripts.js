@@ -118,6 +118,31 @@
       document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
   }
 
+  function updateThemeIcon() {
+      var iconHost = document.getElementById('theme-icon');
+      if (!iconHost) return;
+
+      var isDark = localStorage.getItem('darkTheme') === 'true';
+
+      var sunSvg =
+            '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">' +
+            '<circle cx="12" cy="12" r="4.25" stroke="currentColor" stroke-width="1.8"/>' +
+            '<path d="M12 2.2v2.2M12 19.6v2.2M2.2 12h2.2M19.6 12h2.2M4.3 4.3l1.6 1.6M18.1 18.1l1.6 1.6M19.7 4.3l-1.6 1.6M5.9 18.1l-1.6 1.6"' +
+            ' stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+            '</svg>';
+
+      var moonSvg =
+            '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">' +
+            '<path d="M21 14.5c-1.2.6-2.6 1-4.1 1-4.7 0-8.4-3.8-8.4-8.4 0-1.5.4-2.9 1-4.1C5.7 4.1 3 7.3 3 11.2 3 16.6 7.4 21 12.8 21c3.9 0 7.1-2.7 8.2-6.5Z"' +
+            ' stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>' +
+            '</svg>';
+
+      iconHost.innerHTML = isDark ? moonSvg : sunSvg;
+
+      var label = iconHost.closest('label');
+      if (label) label.title = isDark ? 'Switch to light theme' : 'Switch to dark theme';
+  }
+
   function defaultDarkTheme() {
       {{- with .Site.Params.defaultDarkTheme }}
       if (localStorage.getItem('darkTheme') == null) {
@@ -142,6 +167,7 @@
           persistTheme('false');
       }
       setDocumentThemeAttr();
+      updateThemeIcon();
   });
 
   function showTheme() {
@@ -153,6 +179,7 @@
         checkbox.checked = false;
     }
     setDocumentThemeAttr();
+    updateThemeIcon();
   }
 
   function showContent() {
