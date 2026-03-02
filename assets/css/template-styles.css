@@ -348,10 +348,11 @@ caption {
     margin-left: 15rem;
 }
 .main-and-footer > div {
-    /*max-width: 50rem;*/
-    margin: 0 auto;
+    max-width: 50rem;
+    /*margin: 0 auto;*/
     padding: 1rem 2rem;
 }
+
 [role="contentinfo"] {
     font-size: 0.85rem;
     text-align: center;
