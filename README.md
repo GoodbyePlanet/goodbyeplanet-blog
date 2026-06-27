@@ -1,6 +1,6 @@
 # GoodbyePlanet blog
 
-### GoodbyePlanet blog is here => [Blog](https://goodbyeplanet-blog.vercel.app/)
+### GoodbyePlanet blog is here => [Blog](https://blog.goodbyeplanet.dev/)
 
 ### Installing
 
