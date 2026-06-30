@@ -115,7 +115,7 @@ Example:
 ```python
 CodeSymbol(
     name="list_users",
-    symbol_type="function",
+    symbol_type="api_route",
     language="python",
     source="async def list_users(db: Session) -> list[User]:\n    ...",
     file_path="auth-service/routers/users.py",
@@ -178,9 +178,27 @@ floating-point numbers (e.g. 768 or 3072 floats depending on the provider). The 
 *meaning* go into that string.
 It starts with a human-readable preamble that names the language, symbol type, parent class, and owning service, then
 layers in framework-specific metadata — Spring stereotypes, HTTP method and route, annotations — followed by a truncated
-docstring and the full signature. Finally, the raw source body is appended, capped at ~6,000 characters (~1,500
-tokens). The goal is to give the embedding model everything it would need to understand the symbol's role, not just
-its implementation.
+docstring and the full signature. Finally, the raw source body is appended. The goal is to give the embedding model everything it
+would need to understand the symbol's role, not just its implementation.
+
+Putting it together, the `list_users` symbol from earlier serializes into a single string like this:
+
+```text
+Python api route `list_users` (service: auth-service)
+Package/module: auth-service.routers.users
+HTTP endpoint: GET /users
+Annotations: @app.get("/users")
+Return all users.
+
+async def list_users(db: Session) -> list[User]
+async def list_users(db: Session) -> list[User]:
+    """Return all users."""
+    return db.query(User).all()
+```
+
+Everything above the blank line is the metadata preamble plus the (delimiter-stripped) docstring; below it sit the
+signature and then the full source body. That entire block is what becomes one dense vector. Notice the signature
+appears twice — once on its own line as structured metadata, and again as the first line of the raw source.
 The fields that are useful for *displaying* results (like `start_line`, `end_line`, `file_path`, `signature`, `source`)
 or *filtering* them (like `service`) are stored separately as the Qdrant **payload** —
 they sit next to the vector but are never embedded.
