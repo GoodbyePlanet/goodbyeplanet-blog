@@ -11,11 +11,11 @@ authors:
 #### Introduction
 
 This blog post explains the RAG (retrieval-augmented generation) pipeline behind
-[**semcode**](https://github.com/GoodbyePlanet/semcode), an MCP server that does
-semantic code search across your GitHub repositories. It covers both parts of the pipeline: the **ingestion** side — how
+[*semcode*](https://github.com/GoodbyePlanet/semcode), an MCP server that does
+semantic code search across your GitHub repositories. It covers both parts of the pipeline: the *ingestion* side — how
 repositories are found, how code is parsed into symbols with Tree-sitter, how embedding inputs are constructed both
 dense and sparse, and how
-points land in Qdrant incrementally — and the **retrieval** side — how queries are encoded into both dense and sparse
+points land in Qdrant incrementally — and the *retrieval* side — how queries are encoded into both dense and sparse
 vectors and fused server-side with RRF (Reciprocal Rank Fusion). Along the way we'll cover why a hybrid dense+sparse
 approach beats either one alone for code, and why the *payload* stored next to each vector matters as much as the vector
 itself.
@@ -40,7 +40,7 @@ Meaning is distributed across structure, not sentences:
 - The class it belongs to (OrderProcessingService) carries domain context
 
 None of that is a sentence. You can't chunk code by paragraph — you chunk by symbol (function, class, method).
-Let's see how that is implemented in **semcode**.
+Let's see how that is implemented in semcode.
 
 ---
 
@@ -57,12 +57,16 @@ For clarity, bellow is a pruned AST. Just to give you a mental model of how a pa
 a function: a decorated async definition with typed parameters, a return annotation, and a body containing a
 docstring and a single return.
 
-```text
+```python
 @app.get("/users")
 async def list_users(db: Session) -> list[User]:
     """Return all users."""
     return db.query(User).all()
+```
 
+Tree-sitter parses that function into the following AST:
+
+```text
 module
 └── decorated_definition
     ├── decorator              → "@app.get("/users")"
@@ -82,31 +86,31 @@ Tree-sitter is a parser generator tool. It can build a concrete syntax tree for 
 the syntax tree as the source file is edited.
 [Tree-sitter official documentation](https://tree-sitter.github.io/tree-sitter/)
 
-What is a Code Symbol in **semcode**?
+What is a Code Symbol in semcode?
 
 A symbol is one named, self-contained unit of code that a language considers meaningful — a function, a class, a method,
-an interface, a React component, a hook... In **semcode** a symbol is a CodeSymbol dataclass,
+an interface, a React component, a hook... In semcode a symbol is a CodeSymbol dataclass,
 which captures everything needed to search, understand, and locate it without reading the surrounding file.
 
 What a `CodeSymbol` carries:
 
-**name / symbol_type / language** — These uniquely describe what kind of thing this is (save,
+`name` / `symbol_type` / `language` — These uniquely describe what kind of thing this is (save,
 method, java), and are stored on the point so results can be displayed and grouped by language or type.
 
-**signature** — The declaration line only, e.g. *def save(self, db: Session) -> User*. This is what you'd see in an
+`signature` — The declaration line only, e.g. *def save(self, db: Session) -> User*. This is what you'd see in an
 IDE's autocomplete popup — compact enough to show in search results without including the full body.
 
-**source** — The complete raw text of the symbol — from its declaration through the end of its body. This is what gets embedded into the
+`source` — The complete raw text of the symbol — from its declaration through the end of its body. This is what gets embedded into the
 vector store, giving the model the full implementation context when a chunk is retrieved.
 
-**start_line / end_line** — Position recorded by Tree-sitter during parsing, used to link a search result back
+`start_line` / `end_line` — Position recorded by Tree-sitter during parsing, used to link a search result back
 to an exact location in the file.
 
-**parent_name / package** — Structural context. **parent_name** says which class owns this method; **package** says
+`parent_name` / `package` — Structural context. `parent_name` says which class owns this method; `package` says
 which Java package or Python module the file belongs to. Without these, two methods both named save in different services are
 indistinguishable.
 
-**annotations / extras** — Language-specific enrichment. A Java @GetMapping("/users") lands in annotations; the
+`annotations` / `extras` — Language-specific enrichment. A Java @GetMapping("/users") lands in annotations; the
 extracted HTTP route string (GET /users) lands in extras. For React, extras flag whether a component uses hooks,
 or whether a function matches the React component signature pattern.
 
@@ -132,36 +136,36 @@ CodeSymbol(
 
 So the full pipeline is:
 Tree-sitter parses code into an AST. The parser goes through that AST node by node, asks each node where it starts/ends
-and what it contains, and puts all of that into a **CodeSymbol** — one symbol per meaningful language construct.
+and what it contains, and puts all of that into a `CodeSymbol` — one symbol per meaningful language construct.
 
 ---
 
 #### Building the embedding input
 
-Now, having knowledge about **CodeSymbols**, we can build the input for a vector database. In **semcode**
+Now, having knowledge about `CodeSymbols`, we can build the input for a vector database. In semcode
 [Qdrant](https://qdrant.tech/) is used for to store vectors, we have two types of inputs: dense and sparse embeddings.
 
 What are dense embeddings?
 
-**Dense embeddings** encode the *meaning* of text into a fixed-size vector of floating-point numbers — typically
+*Dense embeddings* encode the *meaning* of text into a fixed-size vector of floating-point numbers — typically
 hundreds or thousands of dimensions depending on which embedding provider is chosen. Two pieces of text that express the
 same idea will land close together in that vector space even if they share no words in common. For code search this
 means a query like "find the method that handles payment retries" can surface `retryWithBackoff()`
 without those words appearing anywhere in the source.
 
-```text
+```shell
 dense = [0.2, 0.3, 0.5, 0.7, ...]  # several hundred floats
 ```
 
 What are sparse embeddings?
 
-**Sparse embeddings** work the opposite way: instead of capturing meaning, they represent text as a large vocabulary
+*Sparse embeddings* work the opposite way: instead of capturing meaning, they represent text as a large vocabulary
 vector where almost every entry is zero and only the terms that actually appear get a non-zero weight. BM25 (Best Match 25)
 is the algorithm behind this — it scores each token by how often it appears in a document relative to how common it
 is across the whole corpus. This makes sparse embeddings excellent at exact keyword matching: if you search for
 `PlaceOrderRequest` or `@Transactional`, BM25 will find every document that contains those tokens precisely.
 
-```text
+```shell
 SparseVector(
     indices=[331, 14136, ...],   # vocabulary token IDs of non-zero terms
     values=[0.5, 0.7, ...],      # BM25 weights for each term
@@ -170,7 +174,7 @@ SparseVector(
 # The rest of the values are zero. This is why it's called a sparse vector.
 ```
 
-How does **semcode** build the dense input?
+How does semcode build the dense input?
 
 The whole `CodeSymbol` object is not embedded directly — it is first serialized into a single text string, and that
 string is what the embedding model sees. One symbol produces one string, which produces one vector: an array of
@@ -183,7 +187,7 @@ would need to understand the symbol's role, not just its implementation.
 
 Putting it together, the `list_users` symbol from earlier serializes into a single string like this:
 
-```text
+```shell
 Python api route `list_users` (service: auth-service)
 Package/module: auth-service.routers.users
 HTTP endpoint: GET /users
@@ -200,10 +204,10 @@ Everything above the blank line is the metadata preamble plus the (delimiter-str
 signature and then the full source body. That entire block is what becomes one dense vector. Notice the signature
 appears twice — once on its own line as structured metadata, and again as the first line of the raw source.
 The fields that are useful for *displaying* results (like `start_line`, `end_line`, `file_path`, `signature`, `source`)
-or *filtering* them (like `service`) are stored separately as the Qdrant **payload** —
+or *filtering* them (like `service`) are stored separately as the Qdrant *payload* —
 they sit next to the vector but are never embedded.
 
-How does **semcode** build the sparse input?
+How does semcode build the sparse input?
 
 Building BM25 text input is minimal — it concatenates only the signature, docstring, and raw source, with no metadata.
 It splits camelCase and snake_case identifiers into their component words while keeping the original form alongside. A
@@ -214,7 +218,7 @@ Why does sparse matter when the dense input is already rich? Dense embeddings ex
 the method that retries payments" can surface `retryWithBackoff` even if no query word appears in the source — but that
 power trades precision for meaning, and rare or project-specific identifiers like `PlaceOrderRequest` get smoothed
 toward neighboring concepts in the model's vector space. BM25 fills exactly that gap: it matches tokens literally with
-no compression, and **semcode's** code-aware tokenization splits `PlaceOrderRequest` into `Place Order Request`
+no compression, and semcode's code-aware tokenization splits `PlaceOrderRequest` into `Place Order Request`
 alongside the original, so it handles both exact identifier lookups and natural-language queries that dense alone would miss.
 
 So the full picture is:
@@ -233,7 +237,7 @@ time.
 ##### Named vectors: two vectors, one point
 
 Qdrant lets a single point carry multiple vectors under distinct names, each with its own distance metric and index.
-**semcode** uses this directly: the `code_symbols` collection defines two named vectors per point.
+semcode uses this directly: the `code_symbols` collection defines two named vectors per point.
 
 - `text-dense` — cosine distance, dimensionality set by the embedding provider.
 - `text-sparse` — Qdrant's native BM25 sparse index.
@@ -247,15 +251,15 @@ section) possible in a single round-trip.
 Alongside the two vectors, there is the payload — the non-embedded half of the point.
 Payload is a JSON object with the following fields:
 
-- **Identity & filtering** — `symbol_name`, `symbol_type`, `language`, `service`,
+- Identity & filtering — `symbol_name`, `symbol_type`, `language`, `service`,
   `file_path`, `package`, `parent_name`. These uniquely place the symbol in
   the repo. Only one of them — `service` — is wired as an active query-time
   filter on semantic search; the others are kept on the payload for display,
   scoped lookups (e.g. exact-name search), and future use.
-- **Display** — `signature`, `source`, `docstring`, `start_line`, `end_line`,
+- Display — `signature`, `source`, `docstring`, `start_line`, `end_line`,
   `annotations`, `extras` (HTTP method, route, Spring stereotype). These are
   what the MCP client renders back to the user.
-- **Bookkeeping** — `file_hash`, `indexed_at`. Not exposed at query time, but
+- Bookkeeping — `file_hash`, `indexed_at`. Not exposed at query time, but
   critical for the incremental reindex flow: the hash is how the pipeline
   decides a file hasn't changed and can be skipped.
 
@@ -265,7 +269,7 @@ By default, when you search Qdrant, it scores vectors first and filters results 
 "OAuth 2.0 implementation in payment-service", Qdrant would still compare your query vector against *every* stored
 symbol — then throw away the ones that don't match.
 
-Payload indexes flip this order. **semcode** indexes six fields — `language`, `service`, `symbol_type`, `chunk_tier`,
+Payload indexes flip this order. semcode indexes six fields — `language`, `service`, `symbol_type`, `chunk_tier`,
 `parent_name`, `file_path` — so Qdrant can narrow the candidate set *before* any vector math happens. A `service` here is
 one indexed repository — for example `payment-service`, `auth-service`, or `order-service` — so filtering on it scopes a
 search to a single codebase. Going back to the "OAuth 2.0 implementation in payment-service" query: with `service`
@@ -277,7 +281,7 @@ which scrolls the collection by `service` and `file_path`.
 
 ##### A second, simpler collection
 
-Code symbols aren't the only RAG corpus in **semcode**. A separate `git_commits` collection stores commit messages and
+Code symbols aren't the only RAG corpus in semcode. A separate `git_commits` collection stores commit messages and
 diff metadata as dense-only points.
 
 ---
@@ -285,7 +289,7 @@ diff metadata as dense-only points.
 #### Indexing flow: incremental, content-addressed
 
 Embedding API calls are the dominant cost in any indexing run, and re-embedding an entire repository on every code change
-would be expensive at scale. **semcode** avoids this by treating indexing as a diff operation: it uses git blob
+would be expensive at scale. semcode avoids this by treating indexing as a diff operation: it uses git blob
 SHAs as content fingerprints to identify which files have changed, and only those files are parsed, embedded, and
 upserted. A service with 1,000 files where 10 changed sends 10 embedding requests, not 1,000. This section describes
 the full indexing pipeline.
@@ -310,7 +314,7 @@ For every file that is new or has a changed blob SHA, the pipeline fetches the c
 parses it into `CodeSymbol` objects, builds both dense and sparse inputs, and calls the dense provider and then the
 sparse provider sequentially, passing each the full batch of symbol texts parsed from that file.
 
-The upsert is a **delete-then-insert at the file level**: all existing points whose `file_path` matches are removed
+The upsert is a *delete-then-insert at the file level*: all existing points whose `file_path` matches are removed
 first, then the freshly embedded points are inserted. This keeps the index clean when a file loses methods,
 gains new ones, or is restructured.
 
@@ -328,7 +332,7 @@ encoders — the dense model turns it into a floating-point vector, the BM25 tur
 Both are sent to Qdrant in a single call, which runs each retriever independently, ranks the top K×2 candidates
 from each, and produces two separate ranked lists.
 
-Qdrant then uses **Reciprocal Rank Fusion (RRF)** to merge those two ranked lists into one before returning the
+Qdrant then uses *Reciprocal Rank Fusion (RRF)* to merge those two ranked lists into one before returning the
 final top K results. For example, using the query _"find the method that retries failed payments"_ merge looks like
 this:
 
@@ -361,7 +365,7 @@ giving you both in a single round-trip. The payload is half the system: without 
 payload, every search scans the entire collection regardless of how good the vectors are. And without
 incremental indexing via blob SHAs, the embedding cost alone would make continuous reindexing impractical at any serious
 repository scale. Together these choices form a pipeline that stays accurate, stays fast, and stays affordable as the
-codebase grows. Beyond semantic search, **semcode** also exposes direct symbol-name lookup (`find_symbol`) and a
+codebase grows. Beyond semantic search, semcode also exposes direct symbol-name lookup (`find_symbol`) and a
 GitHub-backed `get_code_context` tool for retrieving full file or symbol source at request time.
 
 ---
