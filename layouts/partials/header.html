@@ -1,5 +1,7 @@
 <header class="intro-and-nav" role="banner">
+    {{ if not (and (eq .Kind "page") (eq .Type "post")) }}
     <div class="left-rocket-only">
         {{ partial "rocket.html" . }}
     </div>
+    {{ end }}
 </header>
