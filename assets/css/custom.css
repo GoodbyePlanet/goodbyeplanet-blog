@@ -344,6 +344,22 @@ main h6 {
     color: #f0f0f0;
 }
 
+/* Accent terms - used sparingly in post content to color-code key concepts,
+   ngrok-style (see mcp-rag-semantic-code-search). */
+main .accent-orange {
+    color: #ffb347;
+    font-weight: 700;
+}
+
+main .accent-teal {
+    color: #2f9e8f;
+    font-weight: 700;
+}
+
+:root[data-theme="dark"] main .accent-teal {
+    color: #4fd8c4;
+}
+
 .nav-list-top {
     display: flex;
     flex-wrap: wrap;

@@ -14,9 +14,9 @@ This blog post explains the RAG (retrieval-augmented generation) pipeline behind
 [*semcode*](https://github.com/GoodbyePlanet/semcode), an MCP server that does
 semantic code search across your GitHub repositories. It covers both parts of the pipeline: the *ingestion* side — how
 repositories are found, how code is parsed into symbols with Tree-sitter, how embedding inputs are constructed both
-dense and sparse, and how
-points land in Qdrant incrementally — and the *retrieval* side — how queries are encoded into both dense and sparse
-vectors and fused server-side with RRF (Reciprocal Rank Fusion). Along the way we'll cover why a hybrid dense+sparse
+<span class="accent-orange">dense</span> and <span class="accent-teal">sparse</span>, and how
+points land in Qdrant incrementally — and the *retrieval* side — how queries are encoded into both <span class="accent-orange">dense</span> and <span class="accent-teal">sparse</span>
+vectors and fused server-side with RRF (Reciprocal Rank Fusion). Along the way we'll cover why a hybrid <span class="accent-orange">dense</span>+<span class="accent-teal">sparse</span>
 approach beats either one alone for code, and why the *payload* stored next to each vector matters as much as the vector
 itself.
 
@@ -143,11 +143,11 @@ and what it contains, and puts all of that into a `CodeSymbol` — one symbol pe
 #### Building the embedding input
 
 Now, having knowledge about `CodeSymbols`, we can build the input for a vector database. In semcode
-[Qdrant](https://qdrant.tech/) is used for to store vectors, we have two types of inputs: dense and sparse embeddings.
+[Qdrant](https://qdrant.tech/) is used for to store vectors, we have two types of inputs: <span class="accent-orange">dense</span> and <span class="accent-teal">sparse</span> embeddings.
 
-What are dense embeddings?
+What are <span class="accent-orange">dense</span> embeddings?
 
-*Dense embeddings* encode the *meaning* of text into a fixed-size vector of floating-point numbers — typically
+<span class="accent-orange">Dense embeddings</span> encode the *meaning* of text into a fixed-size vector of floating-point numbers — typically
 hundreds or thousands of dimensions depending on which embedding provider is chosen. Two pieces of text that express the
 same idea will land close together in that vector space even if they share no words in common. For code search this
 means a query like "find the method that handles payment retries" can surface `retryWithBackoff()`
@@ -157,9 +157,9 @@ without those words appearing anywhere in the source.
 dense = [0.2, 0.3, 0.5, 0.7, ...]  # several hundred floats
 ```
 
-What are sparse embeddings?
+What are <span class="accent-teal">sparse</span> embeddings?
 
-*Sparse embeddings* work the opposite way: instead of capturing meaning, they represent text as a large vocabulary
+<span class="accent-teal">Sparse embeddings</span> work the opposite way: instead of capturing meaning, they represent text as a large vocabulary
 vector where almost every entry is zero and only the terms that actually appear get a non-zero weight. BM25 (Best Match 25)
 is the algorithm behind this — it scores each token by how often it appears in a document relative to how common it
 is across the whole corpus. This makes sparse embeddings excellent at exact keyword matching: if you search for
@@ -214,7 +214,7 @@ It splits camelCase and snake_case identifiers into their component words while 
 token like `PlaceOrderRequest` becomes `Place Order Request` — so BM25 can match the exact identifier *and* a
 natural-language query like "place order request" that doesn't use the original casing.
 
-Why does sparse matter when the dense input is already rich? Dense embeddings excel at intent — a query like "find
+Why does <span class="accent-teal">sparse</span> matter when the <span class="accent-orange">dense</span> input is already rich? <span class="accent-orange">Dense</span> embeddings excel at intent — a query like "find
 the method that retries payments" can surface `retryWithBackoff` even if no query word appears in the source — but that
 power trades precision for meaning, and rare or project-specific identifiers like `PlaceOrderRequest` get smoothed
 toward neighboring concepts in the model's vector space. BM25 fills exactly that gap: it matches tokens literally with
@@ -222,8 +222,8 @@ no compression, and semcode's code-aware tokenization splits `PlaceOrderRequest`
 alongside the original, so it handles both exact identifier lookups and natural-language queries that dense alone would miss.
 
 So the full picture is:
-Every `CodeSymbol` produces two inputs. The dense input is wide and context-rich — it tells the model the symbol's
-place in the system. The sparse input is narrow and literal — it gives BM25 the exact tokens to match against. Both
+Every `CodeSymbol` produces two inputs. The <span class="accent-orange">dense</span> input is wide and context-rich — it tells the model the symbol's
+place in the system. The <span class="accent-teal">sparse</span> input is narrow and literal — it gives BM25 the exact tokens to match against. Both
 are computed in the same pipeline step and stored together as a single point in Qdrant.
 
 ---
@@ -328,7 +328,7 @@ Any path no longer present in the repo is deleted.
 #### Hybrid retrieval at query time
 
 At query time, the same two-track split like in the ingestion phase runs in reverse. The query string goes through both
-encoders — the dense model turns it into a floating-point vector, the BM25 turns it into a sparse vector.
+encoders — the <span class="accent-orange">dense</span> model turns it into a floating-point vector, the BM25 turns it into a <span class="accent-teal">sparse</span> vector.
 Both are sent to Qdrant in a single call, which runs each retriever independently, ranks the top K×2 candidates
 from each, and produces two separate ranked lists.
 
@@ -360,7 +360,7 @@ Building a RAG system for code has its own challenges, is not just RAG with a di
 it requires rethinking every layer of the pipeline, from how you chunk (by symbol, not paragraph)
 to how you embed (rich context for dense vectors, exact tokens for sparse vectors) to how you store
 (named vectors with a payload that carries as much signal as the vectors themselves). Hybrid
-dense+sparse retrieval with server-side RRF bridges the gap between intent-based queries and exact identifier lookups,
+<span class="accent-orange">dense</span>+<span class="accent-teal">sparse</span> retrieval with server-side RRF bridges the gap between intent-based queries and exact identifier lookups,
 giving you both in a single round-trip. The payload is half the system: without a `service` filter indexed on the
 payload, every search scans the entire collection regardless of how good the vectors are. And without
 incremental indexing via blob SHAs, the embedding cost alone would make continuous reindexing impractical at any serious
