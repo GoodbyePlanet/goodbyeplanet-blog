@@ -31,7 +31,7 @@ You get a list of tokens with their probabilities:
 
 ---
 
-#### **Temperature**:
+#### Temperature:
 This parameter controls how deterministic the model is when selecting tokens. The lower the value (e.g., 0.1 or 0.2),
 the more predictable and focused the model becomes.
 
@@ -44,7 +44,7 @@ Sunny drops to 25%, cold drops to 22%, beautiful stays around 18%, purple jumps 
 Result: The model is now "adventurous." There is a decent chance it might pick "purple," making the sentence weird and
 creative.
 
-#### **Top-P Parameter**:
+#### Top-P Parameter:
 
 Top-P (Nucleus Sampling) acts as a filter, it defines a threshold, so the model only considers tokens within the
 top "P" percentage of a likelihood, ignoring the unlikely "tail" of the distribution. 

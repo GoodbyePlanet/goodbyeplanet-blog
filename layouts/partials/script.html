@@ -2,7 +2,6 @@
 {{ $domScripts := $templateDomScripts | resources.ExecuteAsTemplate "js/dom-scripts.js" . }}
 <script src="{{ $domScripts.RelPermalink }}"></script>  
 
-<script src="{{ "js/prism.js" | relURL }}"></script>
 {{ $rocket := resources.Get "js/rocket.js" | minify | fingerprint }}
 <script defer src="{{ $rocket.RelPermalink }}" integrity="{{ $rocket.Data.Integrity }}"></script>
 
@@ -16,3 +15,42 @@
 {{ range .Site.Params.customJs }}
   <script src="{{ . | relURL }}"></script>
 {{ end }}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var blocks = document.querySelectorAll('.highlight');
+
+    blocks.forEach(function (block) {
+      // With line numbers enabled, Chroma renders a two-cell table:
+      // the first `pre.chroma` holds the line-number gutter and the
+      // last one holds the actual code, so grab the last match.
+      var pres = block.querySelectorAll('pre.chroma');
+      var pre = pres[pres.length - 1];
+      if (!pre) {
+        return;
+      }
+
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'highlight-copy-btn';
+      button.setAttribute('aria-label', 'Copy code to clipboard');
+      button.textContent = 'Copy';
+
+      button.addEventListener('click', function () {
+        var text = pre.textContent || '';
+
+        navigator.clipboard.writeText(text).then(function () {
+          button.classList.add('is-copied');
+          button.textContent = 'Copied';
+
+          setTimeout(function () {
+            button.classList.remove('is-copied');
+            button.textContent = 'Copy';
+          }, 1500);
+        });
+      });
+
+      block.appendChild(button);
+    });
+  });
+</script>
