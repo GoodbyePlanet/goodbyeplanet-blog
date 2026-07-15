@@ -2,7 +2,6 @@
 {{ $domScripts := $templateDomScripts | resources.ExecuteAsTemplate "js/dom-scripts.js" . }}
 <script src="{{ $domScripts.RelPermalink }}"></script>  
 
-<script src="{{ "js/prism.js" | relURL }}"></script>
 {{ $rocket := resources.Get "js/rocket.js" | minify | fingerprint }}
 <script defer src="{{ $rocket.RelPermalink }}" integrity="{{ $rocket.Data.Integrity }}"></script>
 
@@ -16,3 +15,43 @@
 {{ range .Site.Params.customJs }}
   <script src="{{ . | relURL }}"></script>
 {{ end }}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var copyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+    var blocks = document.querySelectorAll('.highlight');
+
+    blocks.forEach(function (block) {
+      // With line numbers enabled, Chroma renders a two-cell table:
+      // the first `pre.chroma` holds the line-number gutter and the
+      // last one holds the actual code, so grab the last match.
+      var pres = block.querySelectorAll('pre.chroma');
+      var pre = pres[pres.length - 1];
+      if (!pre) {
+        return;
+      }
+
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'highlight-copy-btn';
+      button.setAttribute('aria-label', 'Copy code to clipboard');
+      button.innerHTML = copyIcon + '<span>Copy</span>';
+
+      button.addEventListener('click', function () {
+        var text = pre.textContent || '';
+
+        navigator.clipboard.writeText(text).then(function () {
+          button.classList.add('is-copied');
+          button.innerHTML = copyIcon + '<span>Copied</span>';
+
+          setTimeout(function () {
+            button.classList.remove('is-copied');
+            button.innerHTML = copyIcon + '<span>Copy</span>';
+          }, 1500);
+        });
+      });
+
+      block.appendChild(button);
+    });
+  });
+</script>

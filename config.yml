@@ -8,6 +8,13 @@ params:
   footer: "**GoodbyePlanet blog** is created by [GoodbyePlanet](https://github.com/GoodbyePlanet). All rights to the **Mother Earth**."
   search: false
 
+markup:
+  highlight:
+    style: github
+    lineNos: true
+    noClasses: false
+    codeFences: true
+
 taxonomies:
   tag: tags
   author: authors

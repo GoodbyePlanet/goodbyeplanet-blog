@@ -49,22 +49,169 @@
     to { opacity: 1; }
 }
 
-/* Force white code block backgrounds (Prism) */
-pre[class*="language-"],
-code[class*="language-"] {
-    background: #fff !important;
-    color: #111;
-    text-shadow: none;
+/* ---------------------------------------------------------------- */
+/* Chroma syntax highlighting (generated via: hugo gen chromastyles  */
+/* --style=github). Defines the token colors used by Chroma's       */
+/* server-side highlighting. Do not override color on spans below.  */
+/* ---------------------------------------------------------------- */
+.chroma .err { color: #f6f8fa; background-color: #82071e }
+.chroma .lnlinks { outline: none; text-decoration: none; color: inherit }
+.chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+.chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; }
+.chroma .hl { background-color: #dedede }
+.chroma .lnt,
+.chroma .ln { white-space: pre; -webkit-user-select: none; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em; color: #7f7f7f }
+.chroma .line { display: flex; }
+.chroma .k, .chroma .kc, .chroma .kd, .chroma .kn, .chroma .kp, .chroma .kr, .chroma .kt { color: #cf222e }
+.chroma .na, .chroma .nc, .chroma .nx, .chroma .p { color: #1f2328 }
+.chroma .no, .chroma .nd, .chroma .nt { color: #0550ae }
+.chroma .ni { color: #6639ba }
+.chroma .nl { color: #900; font-weight: bold }
+.chroma .nn { color: #24292e }
+.chroma .nb, .chroma .nf, .chroma .fm { color: #6639ba }
+.chroma .bp { color: #6a737d }
+.chroma .nv, .chroma .vc, .chroma .vg, .chroma .vi, .chroma .vm { color: #953800 }
+.chroma .s, .chroma .sa, .chroma .sb, .chroma .sc, .chroma .dl, .chroma .sd,
+.chroma .s2, .chroma .se, .chroma .sh, .chroma .si, .chroma .sx, .chroma .sr, .chroma .s1 { color: #0a3069 }
+.chroma .ss { color: #032f62 }
+.chroma .m, .chroma .mb, .chroma .mf, .chroma .mh, .chroma .mi, .chroma .il, .chroma .mo, .chroma .o, .chroma .ow { color: #0550ae }
+.chroma .c, .chroma .ch, .chroma .cm, .chroma .c1, .chroma .cs, .chroma .cp, .chroma .cpf { color: #57606a }
+.chroma .gd { color: #82071e; background-color: #ffebe9 }
+.chroma .ge, .chroma .go { color: #1f2328 }
+.chroma .gi { color: #116329; background-color: #dafbe1 }
+.chroma .gl { text-decoration: underline }
+.chroma .w { color: #fff }
+
+/* ---------------------------------------------------------------- */
+/* Code block "card" styling on top of Chroma's own output.         */
+/* Chroma (style: github) already sets a light background          */
+/* (#f7f7f7) on .chroma - we don't fight it with !important, we     */
+/* just wrap it in a rounded, bordered card and tidy up spacing.    */
+/* ---------------------------------------------------------------- */
+.highlight {
+    position: relative;
+    margin: 1.5rem 0;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.5rem;
+    overflow: hidden;
 }
 
-.highlight pre,
-.highlight code {
-    background: #fff !important;
-    color: #111;
+.highlight .chroma {
+    margin: 0;
+    padding: 1rem 0;
+    overflow-x: auto;
 }
 
-pre[class*="language-"] {
-    border: 1px solid rgb(0, 26, 75);
+.highlight pre.chroma {
+    margin: 0;
+    background: transparent;
+}
+
+.highlight .lntable {
+    width: 100%;
+}
+
+/* Line-number gutter: muted gray, comfortable spacing, no harsh
+   border/background distinguishing it from the code. */
+.highlight .lntd:first-child {
+    padding-left: 1rem;
+    padding-right: 0.5rem;
+    text-align: right;
+    white-space: nowrap;
+    color: #b0b0b0;
+}
+
+.highlight .lntd:first-child .lnt {
+    color: #b0b0b0;
+    margin-right: 0;
+}
+
+.highlight .lntd:last-child {
+    width: 100%;
+    padding-right: 1rem;
+}
+
+/* Copy-to-clipboard button, injected via JS in script.html */
+.highlight-copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 0.35em 0.6em;
+    color: #57606a;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.35rem;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.highlight:hover .highlight-copy-btn,
+.highlight-copy-btn:focus-visible {
+    opacity: 1;
+}
+
+.highlight-copy-btn:hover {
+    color: #1f2328;
+    border-color: #cfcfcf;
+}
+
+.highlight-copy-btn svg {
+    width: 0.9em;
+    height: 0.9em;
+    flex-shrink: 0;
+}
+
+.highlight-copy-btn.is-copied {
+    opacity: 1;
+    color: #116329;
+    border-color: #a9dfbf;
+}
+
+/* Inline code chip (not code blocks) - used in place of bold for terms/identifiers */
+main :not(pre) > code {
+    background: rgba(120, 120, 120, 0.08);
+    border: 1px solid rgba(120, 120, 120, 0.2);
+    border-radius: 0.25rem;
+    padding: 0.1em 0.35em;
+}
+
+:root[data-theme="dark"] main :not(pre) > code {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* De-emphasize bold: keep it visually quiet rather than heavy */
+main strong,
+main b {
+    font-weight: 500;
+}
+
+/* Ngrok-style typography: muted body copy, full-opacity emphasis for hierarchy */
+main p,
+main li,
+main blockquote {
+    color: rgba(17, 17, 17, 0.72);
+}
+
+main strong,
+main b,
+main em,
+main i,
+main a,
+main h1,
+main h2,
+main h3,
+main h4,
+main h5,
+main h6 {
+    color: #111;
 }
 
 .nav-list-top {
