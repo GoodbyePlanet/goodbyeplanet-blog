@@ -163,6 +163,19 @@ main :not(pre) > code {
     font-size: 0.75em;
 }
 
+/* Mobile Safari/Chrome "font boosting" inflates the text inside narrow,
+   horizontally-scrollable blocks like <pre> to make them "more readable",
+   overriding the font-size above. Opt code blocks out of that behavior so
+   they render at the size we actually set. */
+.highlight,
+.highlight pre,
+.highlight code,
+.cmd,
+.cmd code {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
 .highlight {
     position: relative;
     margin: 1.5rem 0;
