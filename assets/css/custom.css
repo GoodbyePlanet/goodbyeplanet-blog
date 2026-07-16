@@ -170,11 +170,9 @@ main :not(pre) > code {
    itself, so set it on html/body as well, and force it with !important
    in case the host app injects its own override. */
 html,
-body {
-    -webkit-text-size-adjust: 100% !important;
-    text-size-adjust: 100% !important;
-}
-
+body,
+main,
+main *,
 .highlight,
 .highlight pre,
 .highlight code,
@@ -182,8 +180,8 @@ pre,
 code,
 .cmd,
 .cmd code {
-    -webkit-text-size-adjust: 100% !important;
-    text-size-adjust: 100% !important;
+    -webkit-text-size-adjust: none !important;
+    text-size-adjust: none !important;
 }
 
 .highlight {
