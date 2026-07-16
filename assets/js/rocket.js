@@ -155,11 +155,9 @@
 
         const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-        let launching = false;
-
         links.forEach((link) => {
             link.addEventListener("click", (event) => {
-                if (launching) {
+                if (rocketContainer && rocketContainer.dataset.launching === "true") {
                     event.preventDefault();
                     return;
                 }
@@ -167,7 +165,7 @@
                 if (reducedMotion || !rocketContainer) return;
 
                 event.preventDefault();
-                launching = true;
+                rocketContainer.dataset.launching = "true";
 
                 const destination = link.href;
                 let navigated = false;
@@ -224,9 +222,37 @@
         roots.forEach(initRocket);
     }
 
+    function playLandingAnimation(rocketContainer) {
+        rocketContainer.classList.remove("launching");
+        delete rocketContainer.dataset.launching;
+
+        rocketContainer.classList.add("landing");
+        spawnExhaustBurst(rocketContainer);
+
+        const finish = () => rocketContainer.classList.remove("landing");
+        rocketContainer.addEventListener("animationend", finish, { once: true });
+        window.setTimeout(finish, 1400);
+    }
+
+    function resetLaunchState() {
+        document.querySelectorAll(".rocket-container").forEach((el) => {
+            if (el.classList.contains("launching") || el.dataset.launching === "true") {
+                playLandingAnimation(el);
+            }
+        });
+    }
+
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", initAllRockets);
     } else {
         initAllRockets();
     }
+
+    // When the browser restores this page from bfcache (e.g. via the back button),
+    // no load/DOMContentLoaded fires, so the "launching" class (and its `forwards`
+    // animation end-state that hides the rocket) would otherwise persist forever.
+    window.addEventListener("pageshow", (event) => {
+        if (!event.persisted) return;
+        resetLaunchState();
+    });
 })();

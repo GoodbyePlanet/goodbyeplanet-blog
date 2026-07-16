@@ -160,6 +160,7 @@
 .highlight code,
 main :not(pre) > code {
     font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.75em;
 }
 
 .highlight {
@@ -547,6 +548,33 @@ html[data-theme="dark"] {
     }
 }
 
+.rocket-container.landing {
+    animation: rocket-landing 1.2s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+
+@keyframes rocket-landing {
+    0% {
+        transform: translateY(-160%) scaleX(0.7) scaleY(0.7);
+        opacity: 0;
+    }
+    80% {
+        transform: translateY(8px) scaleX(1.05) scaleY(0.95);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(0) scaleX(1) scaleY(1);
+        opacity: 1;
+    }
+}
+
+.rocket-container.landing .exhaust-visuals .flame-core {
+    height: 500px;
+}
+
+.rocket-container.landing .exhaust-visuals .flame-outer {
+    height: 600px;
+}
+
 .rocket-body {
     position: relative;
     width: 60px;
@@ -767,6 +795,15 @@ body.no-rocket .main-and-footer {
 body.no-rocket .main-and-footer > div {
     max-width: 50rem;
     margin: 0 auto;
+    padding-left: 3.5rem;
+    padding-right: 3.5rem;
+}
+
+@media (max-width: 720px) {
+    body.no-rocket .main-and-footer > div {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
 }
 
 body.no-rocket .nav-list-top {
