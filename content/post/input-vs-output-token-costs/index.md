@@ -6,7 +6,7 @@ authors:
   - Nemanja
 ---
 
-[![Click to zoom](input-vs-output-tokens.png)](input-vs-output-tokens.png)
+[![Click to zoom](input-vs-output-cost.png)](input-vs-output-cost.png)
 
 Every AI provider charges your AI usage by input and output tokens. What you can see is that output tokens are more expensive — by 5× and more. If you're a curious one and you often ask yourself how and why, this blog might be the one for you.
 
@@ -66,7 +66,7 @@ That covers every weight — but not quite every multiply-add. Attention also co
 
 A multiply-add can only happen if the weights are sitting right where the multiplying happens. And on a GPU, those are two separate pieces of hardware.
 
-There is the **chip**, which does all the arithmetic — for a 70B model, 70 billion multiply-adds per token, **140 GFLOP**, all of it inside the chip and nowhere else. And there is the **memory**, the GPU's VRAM, where the weights are kept. Memory doesn't compute anything; it only holds numbers. So every weight has to be carried from VRAM over to the chip before it can be multiplied by anything.
+There is the <span class="accent-teal">chip</span>, which does all the arithmetic — for a 70B model, 70 billion multiply-adds per token, **140 GFLOP**, all of it inside the chip and nowhere else. And there is the <span class="accent-orange">memory</span>, the GPU's VRAM, where the weights are kept. Memory doesn't compute anything; it only holds numbers. So every weight has to be carried from VRAM over to the chip before it can be multiplied by anything.
 
 ### How big is a model, in bytes?
 
@@ -78,7 +78,7 @@ A weight is a number, and a number takes up space. How much depends on the **pre
 
 That's where the 140 GB comes from. The chip does have a little memory of its own — SRAM, much faster but there is very little of it: tens of megabytes, against that model's 140,000 megabytes of weights. So a chip can never hold enough to keep a model resident. The weights live in VRAM, and they have to make the trip.
 
-That trip has a speed limit, and it has a name — **memory bandwidth**. For an H100 it's **3.35 TB/s**.
+That trip has a speed limit, and it has a name — <span class="accent-orange">memory bandwidth</span>. For an H100 it's **3.35 TB/s**.
 
 140 GB also doesn't fit on one card; an H100 holds 80 GB. Two would hold it, but that leaves almost nothing spare, and you'll see at the end why that isn't enough. So in practice you spread it wider — say four cards, each holding 35 GB, every layer cut four ways, each card doing a quarter of the multiply-adds.
 
@@ -133,7 +133,7 @@ That's what "autoregressive" means: a thousand output tokens, a thousand forward
 1. **Pulling all 140 GB of weights out of memory** — **41.8 ms**
 2. **Doing 140 GFLOP of arithmetic with them** — at 989 TFLOPS, **0.14 ms**
 
-The chip can't multiply a weight that hasn't arrived yet, so memory bandwidth sets the pace: the token takes about **42 ms**, and only 0.14 ms of that is arithmetic. The chip spends **99.7%** of the token waiting for bytes.
+The chip can't multiply a weight that hasn't arrived yet, so <span class="accent-orange">memory bandwidth</span> sets the pace: the token takes about **42 ms**, and only 0.14 ms of that is arithmetic. The chip spends **99.7%** of the token waiting for bytes.
 
 > **A note on these numbers.** They're *one* H100's specs, so they describe one card doing all the work. On the four-card split each card reads only its own 35 GB, all four at once, and a real decode step is closer to 10 ms. I'll keep the single-card figures throughout: every ratio below is unchanged, and the ratios are the entire argument.
 
@@ -146,7 +146,7 @@ Then it starts over for the next token, and it can't reuse a thing. Token 2 begi
 
 Nothing was skipped. That 141 ms is a thousand tokens' worth of multiply-adds — a thousand times the arithmetic of a single output token, taking a thousand times as long. What changed is step 1: layer 1's weights arrive once and serve all 1,000 tokens before they're discarded. **A thousand output tokens means a thousand trips through 140 GB. A thousand input tokens means one.**
 
-Which is the whole comparison. Loading and math happen at the same time, so you wait for whichever is slower:
+Which is the whole comparison. <span class="accent-orange">Loading</span> and <span class="accent-teal">math</span> happen at the same time, so you wait for whichever is slower:
 
 ```
 Input, 1,000 tokens
@@ -158,9 +158,9 @@ Output, 1,000 tokens
   loading  ██████████████████████████…   41,791 ms   ← what you wait for
 ```
 
-The math bar is the same length in both — same model, same chip, same arithmetic per token. Only the loading bar moved, because output drags 140 TB past the chip where input drags 140 GB. So output's total goes from 141 milliseconds to nearly 42 seconds, with the chip using **0.3%** of its arithmetic capacity the entire time.
+The <span class="accent-teal">math</span> bar is the same length in both — same model, same chip, same arithmetic per token. Only the <span class="accent-orange">loading</span> bar moved, because output drags 140 TB past the chip where input drags 140 GB. So output's total goes from 141 milliseconds to nearly 42 seconds, with the chip using **0.3%** of its arithmetic capacity the entire time.
 
-The compute is the same on both sides. The waiting is what differs.
+The <span class="accent-teal">compute</span> is the same on both sides. The <span class="accent-orange">waiting</span> is what differs.
 
 ---
 
@@ -212,7 +212,7 @@ And it has to *sit somewhere* — the same VRAM holding the weights. Those four 
 | 32K | 10.7 GB | 12 |
 | 128K | 42.9 GB | 3 |
 
-The math had room for 295 people. Memory runs out at 50 — or at three. **Memory is what you run out of, never the chip.**
+The math had room for 295 people. Memory runs out at 50 — or at three. **<span class="accent-orange">Memory</span> is what you run out of, never the <span class="accent-teal">chip</span>.**
 
 And that's the answer to the question. Take the 8K row: 50 users in the batch, so a decode step still reads all 140 GB in 41.8 ms but only does 7 ms of math. The chip sits at **17%** — while prefill, with all 1,000 tokens in hand, runs it at 100%. Same box, same cost per second:
 
@@ -227,11 +227,11 @@ Batching was supposed to close that gap, and it would have — the cache runs ou
 
 ## Conclusion
 
-Per token, input and output are the same amount of compute. The asymmetry is memory, not math: to generate one token alone, you read every weight in the model. Serve hundreds of requests at once and that read is shared — cost per token collapses, all the way down to prefill's throughput. The KV cache doesn't collapse. Each sequence carries its own, nothing is shared, and it grows with every token of context until memory, not arithmetic, is what you've run out of.
+Per token, input and output are the same amount of compute. The asymmetry is <span class="accent-orange">memory</span>, not <span class="accent-teal">math</span>: to generate one token alone, you read every weight in the model. Serve hundreds of requests at once and that read is shared — cost per token collapses, all the way down to prefill's throughput. The KV cache doesn't collapse. Each sequence carries its own, nothing is shared, and it grows with every token of context until memory, not arithmetic, is what you've run out of.
 
 So what you're actually paying for is time on the box, and three different things decide how much:
 
-**Input is billed as compute, output is billed as bandwidth, and context length is billed as rent on the box.**
+**Input is billed as <span class="accent-teal">compute</span>, output is billed as <span class="accent-orange">bandwidth</span>, and context length is billed as rent on the box.**
 
 ---
 
