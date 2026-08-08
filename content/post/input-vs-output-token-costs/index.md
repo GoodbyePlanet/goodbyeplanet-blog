@@ -14,7 +14,7 @@ The usual explanation you will find is that generating text is more computationa
 
 ---
 
-## What "computation" actually means
+#### What "computation" actually means
 
 To understand computation we need to understand **FLOP**. It stands for *FLoating-point OPeration*, and it means one arithmetic act on a decimal number: one multiply, or one add. `3.7 × 0.02` is one FLOP. `1.4 + 0.9` is one FLOP. That's the whole definition.
 
@@ -25,7 +25,7 @@ The units stack in thousands — KFLOP (thousand), MFLOP (million), GFLOP (billi
 
 An NVIDIA H100 is rated at **989 TFLOPS** — 989 trillion operations every second. That's the chip we'll be using throughout.
 
-### The arithmetic in an LLM is: multiply, then add.
+#### The arithmetic in an LLM is: multiply, then add.
 
 To understand what arithmetic an LLM is doing, let's understand tokens. A token is a point in a space with thousands of directions — and a point is just its coordinates, one number per direction.
 
@@ -62,13 +62,13 @@ That covers every weight — but not quite every multiply-add. Attention also co
 
 ---
 
-## Why that matters for the cost
+#### Why that matters for the cost
 
 A multiply-add can only happen if the weights are sitting right where the multiplying happens. And on a GPU, those are two separate pieces of hardware.
 
 There is the <span class="accent-teal">chip</span>, which does all the arithmetic — for a 70B model, 70 billion multiply-adds per token, **140 GFLOP**, all of it inside the chip and nowhere else. And there is the <span class="accent-orange">memory</span>, the GPU's VRAM, where the weights are kept. Memory doesn't compute anything; it only holds numbers. So every weight has to be carried from VRAM over to the chip before it can be multiplied by anything.
 
-### How big is a model, in bytes?
+#### How big is a model, in bytes?
 
 A weight is a number, and a number takes up space. How much depends on the **precision** you store it at. The serving standard is **BF16**: 16 bits, so 2 bytes per weight. Which turns a parameter count into a file size:
 
@@ -98,7 +98,7 @@ That is the trip every weight has to make. Now let's see how many times it has t
 
 ---
 
-## Reading happens all at once. Writing happens one token at a time.
+#### Reading happens all at once. Writing happens one token at a time.
 
 When you send your input to the LLM there are two phases:
 
@@ -126,7 +126,7 @@ That's what "autoregressive" means: a thousand output tokens, a thousand forward
 
 ---
 
-## What one forward pass actually costs
+#### What one forward pass actually costs
 
 **One output token.** A forward pass walks through the model's layers in order, and a 70B model has 80 of them. At each layer, that layer's weights are pulled from VRAM to the chip, used, and then overwritten by the next layer's — there's nowhere to keep them. So producing a single token means:
 
@@ -164,7 +164,7 @@ The <span class="accent-teal">compute</span> is the same on both sides. The <spa
 
 ---
 
-## Input isn't linear
+#### Input isn't linear
 
 That 141 ms was measured *at a thousand tokens*. Change the prompt length and it doesn't move in proportion, because a forward pass contains two kinds of multiply-add and only one has appeared so far.
 
@@ -176,7 +176,7 @@ So input cost isn't one number, it's two: the weight part grows with your prompt
 
 ---
 
-## Nobody is served at batch one
+#### Nobody is served at batch one
 
 Everything above assumes the GPU is generating for exactly one person. No provider runs that way, and serving many at once changes what the weight reloading costs.
 
@@ -196,7 +196,7 @@ Which leaves the obvious question: if 295 people can split one read, why is outp
 
 ---
 
-## The KV cache is what batching can't fix
+#### The KV cache is what batching can't fix
 
 To write its next token, a sequence needs attention over everything before it — every key and value for every prior token. Calculating those again each time would mean redoing the entire prompt over and over, so they're saved instead. That's the **KV cache**, and every decode step re-reads all of it.
 
@@ -225,7 +225,7 @@ Batching was supposed to close that gap, and it would have — the cache runs ou
 
 ---
 
-## Conclusion
+#### Conclusion
 
 Per token, input and output are the same amount of compute. The asymmetry is <span class="accent-orange">memory</span>, not <span class="accent-teal">math</span>: to generate one token alone, you read every weight in the model. Serve hundreds of requests at once and that read is shared — cost per token collapses, all the way down to prefill's throughput. The KV cache doesn't collapse. Each sequence carries its own, nothing is shared, and it grows with every token of context until memory, not arithmetic, is what you've run out of.
 
@@ -235,7 +235,7 @@ So what you're actually paying for is time on the box, and three different thing
 
 ---
 
-## Sources
+#### Sources
 
 **Hardware**
 - [NVIDIA H100 product page](https://www.nvidia.com/en-us/data-center/h100/) — 989.5 TFLOPS dense BF16; 3.35 TB/s HBM3; 80 GB
