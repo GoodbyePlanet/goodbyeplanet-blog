@@ -18,7 +18,7 @@ and how long they take to get from one to the other. That's the trip, so you kno
 
 ---
 
-#### What "computation" actually means
+### What "computation" actually means
 
 The units stack in thousands — KFLOP (thousand), MFLOP (million), GFLOP (billion), **TFLOP** (trillion), PFLOP (
 quadrillion). And one distinction is worth noting:
@@ -84,7 +84,7 @@ count, and we'll come back to them once the prompt gets long enough for them to 
 
 ---
 
-#### Why that matters for the cost
+### Why that matters for the cost
 
 A multiply-add can only happen if the weights are sitting right where the multiplying happens. And on a GPU, those are
 two separate pieces of hardware.
@@ -95,7 +95,7 @@ the <span class="accent-orange">memory</span>, the GPU's VRAM, where the weights
 anything; it only holds numbers. So every weight has to be carried from VRAM over to the <span class="accent-teal">chip</span> before it can be
 multiplied by anything.
 
-#### How big is a model, in bytes?
+### How big is a model, in bytes?
 
 A weight is a number, and a number takes up space. How much depends on the **precision** you store it at. The serving
 standard is **BF16**: 16 bits, so 2 bytes per weight. Which turns a parameter count into a file size:
@@ -133,7 +133,7 @@ input, and when it writes its response.
 
 ---
 
-#### Reading happens all at once. Writing happens one token at a time.
+### Reading happens all at once. Writing happens one token at a time.
 
 When you send your input to the LLM there are two phases:
 
@@ -171,7 +171,7 @@ same arithmetic per token — one phase gets to do it in bulk, the other isn't a
 
 ---
 
-#### What one forward pass actually costs
+### What one forward pass actually costs
 
 **One output token.** A forward pass walks through the model's layers in order, and a 70B model has 80 of them. At each
 layer, that layer's weights are pulled from VRAM to the <span class="accent-teal">chip</span>, used, and then overwritten by the next layer's — there's
@@ -225,7 +225,7 @@ is what differs.
 
 ---
 
-#### Input isn't linear
+### Input isn't linear
 
 That 141 ms was measured *at a thousand tokens*. Change the prompt length and it doesn't move in proportion, because a
 forward pass contains two kinds of multiply-add and only one has appeared so far.
@@ -244,7 +244,7 @@ than twice the cost.
 
 ---
 
-#### Nobody is served at batch one
+### Nobody is served at batch one
 
 Everything above assumes the GPU is generating for exactly one person. No provider runs that way, and serving many at
 once changes what the weight reloading costs.
@@ -272,7 +272,7 @@ Which leaves the obvious question: if 295 people can split one read, why is outp
 
 ---
 
-#### The KV cache is what batching can't fix
+### The KV cache is what batching can't fix
 
 To write its next token, a sequence needs attention over everything before it — every key and value for every prior
 token. Calculating those again each time would mean redoing the entire prompt over and over, so they're saved instead.
@@ -311,7 +311,7 @@ compounds: longer contexts mean fewer users in the batch, and fewer users mean a
 
 ---
 
-#### Conclusion
+### Conclusion
 
 Per token, input and output are the same amount of compute. The asymmetry is <span class="accent-orange">memory</span>,
 not <span class="accent-teal">math</span>: to generate one token alone, you read every weight in the model. Serve
