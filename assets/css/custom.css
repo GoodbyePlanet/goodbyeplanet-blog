@@ -377,7 +377,7 @@ main > h3,
 main > h4,
 main > h5,
 main > h6 {
-    margin-top: 3rem;
+    margin-top: 1.8rem;
 }
 
 /* Sub-headings break the flow less, so they sit closer to what precedes them. */

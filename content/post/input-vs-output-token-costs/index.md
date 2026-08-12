@@ -31,7 +31,7 @@ An NVIDIA H100 is rated at **989 TFLOPS** — 989 trillion operations every seco
 chip</span> we'll be using
 throughout.
 
-#### The arithmetic in an LLM is: multiply, then add.
+### The arithmetic in an LLM is: multiply, then add.
 
 To understand what arithmetic an LLM is doing, let's understand tokens. A token is a point in a space with thousands of
 directions — and a point is just its coordinates, one number per direction.
