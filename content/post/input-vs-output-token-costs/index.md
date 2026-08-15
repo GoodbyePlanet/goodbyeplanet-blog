@@ -1,5 +1,5 @@
 ---
-title: "Why Output Tokens Cost More Than Input Tokens"
+title: "Why Output Tokens Cost More Than Input Tokens — A Hardware Drill-Down"
 date: 2026-08-14
 tags: [ AI, LLM, GPU, Inference ]
 authors:
@@ -9,13 +9,13 @@ authors:
 [![Click to zoom](input-vs-output-cost.png)](input-vs-output-cost.png)
 
 Every AI provider charges your AI usage by input and output tokens. What you can see is that output tokens are more
-expensive — by 5× and more. If you're a curious one and you often ask yourself how and why, this blog might be the one
-for you.
+expensive — by 5× and more. If you'd like to know what's really happening under the hood, at the hardware level, this
+blog might be the one for you.
 
 The usual explanation you will find is that generating text is more computational work than reading it. My understanding
 is a bit different. To understand it we have to go all the way down to the hardware — what
-the <span class="accent-teal">chip</span> actually does, where the weights sit,
-and how long they take to get from one to the other. That's the trip, so you know what you're signing up for.
+the <span class="accent-teal">chip</span> actually does, where the different pieces of a model live (the **weights**,
+above all — more on those shortly), and how long the trip from one of those places to the other takes.
 
 ### What "computation" actually means
 
@@ -27,7 +27,7 @@ quadrillion). And one distinction is worth noting:
 - **FLOPs** (lowercase s) is an *amount of work*. Like **miles**.
 - **FLOPS** (capital S) is *work per second*. Like **miles per hour**.
 
-An NVIDIA H100 is rated at **989 TFLOPS** — 989 trillion operations every second. That's the <span class="accent-teal">
+An NVIDIA H100, one of the cards serving the models you use, is rated at **989 TFLOPS** — 989 trillion operations every second. That's the <span class="accent-teal">
 chip</span> we'll be using
 throughout.
 
@@ -38,8 +38,8 @@ directions — and a point is just its coordinates, one number per direction.
 
 Imagine it like this. The model has a **vocabulary**: every word fragment it can read or write, each one an entry with a
 fixed number. For example Llama 3 70B has **128,256** of them. And it has an **embedding
-dimension**: how many directions that space has, which for this model is **8,192**. So "bank" is one entry in the
-vocabulary, and what the model looks up under that entry is a list of 8,192 numbers.
+dimension**: how many directions that space has, which for this model is **8,192**. Take the word "bank". That's one
+entry in the vocabulary, and what the model looks up under that entry is a list of 8,192 numbers.
 
 That's the whole representation. A token is a list of 8,192 numbers and nothing else, with points close together meaning
 similar things.
@@ -84,7 +84,7 @@ That covers every weight — but not quite every multiply-add. Attention also co
 multiplying token numbers by other token numbers, with no weight involved. Those sit outside the 2-FLOPs-per-weight
 count, and we'll come back to them once the prompt gets long enough for them to matter.
 
-### Why that matters for the cost
+### Why moving the weights matters to the cost
 
 A multiply-add can only happen if the weights are sitting right where the multiplying happens. And on a GPU, those are
 two separate pieces of hardware.
@@ -256,10 +256,10 @@ At a thousand tokens that second part is too small to matter, which is why every
 around fifty thousand tokens the two are equal. By a hundred thousand, the comparing costs twice as much as the weight
 math.
 
-### Nobody is served at batch one
+### One GPU serves many users at once
 
-Everything above assumes the GPU is generating for exactly one person. No provider runs that way, and serving many at
-once changes what the weight reloading costs.
+To keep the arithmetic simple, everything above assumed the GPU is generating for exactly one person. In reality no
+provider runs that way, and serving many people at once changes what the weight reloading costs.
 
 Remember what made decode so expensive: 41.8 ms hauling weights, 0.14 ms using them — for 99.7% of every token,
 the <span class="accent-teal">chip</span>
@@ -332,7 +332,7 @@ Serve hundreds of users at once and they split that read between them, so the co
 already getting. The KV cache never splits. Every conversation carries its own, nobody can share it, and it grows with
 every token of context — until what you run out of is <span class="accent-orange">memory</span>, not arithmetic.
 
-So what you're actually paying for is time on the box, and three different things decide how much:
+So what you're actually paying for is time on the GPU, and three different things decide how much:
 
 **Input is billed as <span class="accent-teal">compute</span>, output is billed as <span class="accent-orange">
 bandwidth</span>, and context length is billed as rent on the box.**
