@@ -124,15 +124,7 @@ And 35 GB still doesn't fit on a <span class="accent-teal">chip</span>. So the w
 the <span class="accent-teal">chip</span> a small block at a time,
 the <span class="accent-teal">chip</span> uses it and throws it away to make room for the next one:
 
-```markdown
-GPU VRAM   [ 35 GB — never leaves ]
-     │
-     │   copy one small block (a few MB)
-     ▼
-GPU chip   [ multiply-add, then discard ]
-     │
-     └──►  next block … until all 35 GB has passed the chip
-```
+[![Click to zoom](vram-to-chip.png)](vram-to-chip.png)
 
 That is the trip every weight has to make. Now let's see how many times it has to happen when the model reads your
 input, and when it writes its response.
@@ -160,12 +152,7 @@ Output is where that breaks. To write token 5 the model must know token 4 — an
 produced. It has to be made first, then fed back in. There's no way to do the two at once, because one of them is an
 *input* to the other.
 
-```markdown
-prompt (1,000 tokens) ──► one pass ──► token 1
-token 1 ───────────────► one pass ──► token 2
-token 2 ───────────────► one pass ──► token 3
-…one pass per token
-```
+[![Click to zoom](one-pass-per-token.png)](one-pass-per-token.png)
 
 Note what does *not* happen: the prompt isn't run through the model again. Each pass carries only the newest token,
 because everything earlier was saved the first time it was computed — that's the KV cache, and we'll come back to it.
@@ -215,15 +202,7 @@ input tokens means one.**
 Which is the whole comparison. <span class="accent-orange">Loading</span> and <span class="accent-teal">math</span>
 happen at the same time, so you wait for whichever is slower:
 
-```markdown
-Input, 1,000 tokens
-  math     ████████████████████ 141 ms        ← what you wait for
-  loading  ██████ 41.8 ms
-
-Output, 1,000 tokens
-  math     ████████████████████ 141 ms
-  loading  ██████████████████████████… 41,791 ms   ← what you wait for
-```
+[![Click to zoom](loading-vs-math.png)](loading-vs-math.png)
 
 The <span class="accent-teal">math</span> bar is the same length in both — same model, same <span class="accent-teal">
 chip</span>, same arithmetic per
@@ -255,6 +234,8 @@ doesn't — double the tokens and you get four times the comparisons.
 At a thousand tokens that second part is too small to matter, which is why every figure above ignored it. Somewhere
 around fifty thousand tokens the two are equal. By a hundred thousand, the comparing costs twice as much as the weight
 math.
+
+[![Click to zoom](input-isnt-linear.png)](input-isnt-linear.png)
 
 ### One GPU serves many users at once
 
