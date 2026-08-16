@@ -452,6 +452,20 @@ main .accent-teal {
     color: #4fd8c4;
 }
 
+/* Theme-aware diagrams (see layouts/shortcodes/themeimg.html). data-theme is
+   always set before the body is revealed, so only one variant ever paints. */
+.theme-dark-only {
+    display: none;
+}
+
+:root[data-theme="dark"] .theme-light-only {
+    display: none;
+}
+
+:root[data-theme="dark"] .theme-dark-only {
+    display: inline;
+}
+
 .nav-list-top {
     display: flex;
     flex-wrap: wrap;

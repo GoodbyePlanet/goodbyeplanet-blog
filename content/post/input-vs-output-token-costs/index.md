@@ -124,7 +124,7 @@ And 35 GB still doesn't fit on a <span class="accent-teal">chip</span>. So the w
 the <span class="accent-teal">chip</span> a small block at a time,
 the <span class="accent-teal">chip</span> uses it and throws it away to make room for the next one:
 
-[![Click to zoom](vram-to-chip.png)](vram-to-chip.png)
+{{< themeimg src="vram-to-chip.png" alt="Click to zoom" >}}
 
 That is the trip every weight has to make. Now let's see how many times it has to happen when the model reads your
 input, and when it writes its response.
@@ -152,7 +152,7 @@ Output is where that breaks. To write token 5 the model must know token 4 — an
 produced. It has to be made first, then fed back in. There's no way to do the two at once, because one of them is an
 *input* to the other.
 
-[![Click to zoom](one-pass-per-token.png)](one-pass-per-token.png)
+{{< themeimg src="one-pass-per-token.png" alt="Click to zoom" >}}
 
 Note what does *not* happen: the prompt isn't run through the model again. Each pass carries only the newest token,
 because everything earlier was saved the first time it was computed — that's the KV cache, and we'll come back to it.
@@ -202,7 +202,7 @@ input tokens means one.**
 Which is the whole comparison. <span class="accent-orange">Loading</span> and <span class="accent-teal">math</span>
 happen at the same time, so you wait for whichever is slower:
 
-[![Click to zoom](loading-vs-math.png)](loading-vs-math.png)
+{{< themeimg src="loading-vs-math.png" alt="Click to zoom" >}}
 
 The <span class="accent-teal">math</span> bar is the same length in both — same model, same <span class="accent-teal">
 chip</span>, same arithmetic per
@@ -235,7 +235,7 @@ At a thousand tokens that second part is too small to matter, which is why every
 around fifty thousand tokens the two are equal. By a hundred thousand, the comparing costs twice as much as the weight
 math.
 
-[![Click to zoom](input-isnt-linear.png)](input-isnt-linear.png)
+{{< themeimg src="input-isnt-linear.png" alt="Click to zoom" >}}
 
 ### One GPU serves many users at once
 

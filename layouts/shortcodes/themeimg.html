@@ -1,0 +1,23 @@
+{{- /*
+  Theme-aware image. Renders the light image plus, when a matching dark variant
+  exists in the page bundle, a second image swapped in via CSS on
+  :root[data-theme="dark"] (see .theme-light-only / .theme-dark-only).
+
+  Usage:  {{< themeimg src="diagram.png" alt="Click to zoom" >}}
+
+  The dark variant is "<name>-dark.<ext>" by default; override with dark="…".
+  If that file is not in the bundle, only the light image is emitted, so this
+  is safe to adopt one diagram at a time.
+*/ -}}
+{{- $src := .Get "src" -}}
+{{- $alt := .Get "alt" | default "Click to zoom" -}}
+{{- $dark := .Get "dark" -}}
+{{- if not $dark -}}
+  {{- $ext := path.Ext $src -}}
+  {{- $dark = printf "%s-dark%s" (strings.TrimSuffix $ext $src) $ext -}}
+{{- end -}}
+{{- $hasDark := and (.Page.Resources.GetMatch $dark) true -}}
+{{- /* Wrapped in <p> so it picks up the same paragraph spacing (and the
+       `p > a > img` centering rule) as the plain-markdown diagrams. */ -}}
+<p><a href="{{ $src }}"{{ if $hasDark }} class="theme-light-only"{{ end }}><img src="{{ $src }}" alt="{{ $alt }}"></a>
+{{- if $hasDark }}<a href="{{ $dark }}" class="theme-dark-only"><img src="{{ $dark }}" alt="{{ $alt }}"></a>{{ end }}</p>
