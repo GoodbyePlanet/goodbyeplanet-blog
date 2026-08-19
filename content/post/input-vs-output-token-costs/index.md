@@ -8,12 +8,12 @@ authors:
 
 [![Click to zoom](input-vs-output-cost.png)](input-vs-output-cost.png)
 
-Every AI provider charges your AI usage by input and output tokens. What you can see is that output tokens are more
-expensive — by 5× and more. If you'd like to know what's really happening under the hood, at the hardware level, this
-blog might be the one for you.
+Every AI provider charges you separately for input and output tokens, and output is the expensive half — four to eight
+times the input rate (Anthropic prices every Claude model at exactly x5 for output tokens). That gap isn't arbitrary. If
+you'd like to know why, this blog might be the one for you.
 
-The usual explanation you will find is that generating text is more computational work than reading it. My understanding
-is a bit different. To understand it we have to go all the way down to the hardware — what
+The usual explanation you will find is that generating text is more "**computational**" work than reading it. My
+understanding is a bit different. To understand it we have to go all the way down to the hardware — what
 the <span class="accent-teal">chip</span> actually does, where the different pieces of a model live (the **weights**,
 above all — more on those shortly), and how long the trip from one of those places to the other takes.
 
@@ -27,7 +27,8 @@ quadrillion). And one distinction is worth noting:
 - **FLOPs** (lowercase s) is an *amount of work*. Like **miles**.
 - **FLOPS** (capital S) is *work per second*. Like **miles per hour**.
 
-An NVIDIA H100, one of the cards serving the models you use, is rated at **989 TFLOPS** — 989 trillion operations every second. That's the <span class="accent-teal">
+An NVIDIA H100, one of the cards serving the models you use, is rated at **989 TFLOPS** — 989 trillion operations every
+second. That's the <span class="accent-teal">
 chip</span> we'll be using
 throughout.
 
@@ -36,7 +37,8 @@ throughout.
 To understand what arithmetic an LLM is doing, let's understand tokens. A token is a point in a space with thousands of
 directions — and a point is just its coordinates, one number per direction.
 
-Imagine it like this. The model has a **vocabulary**: every word fragment it can read or write, each one an entry with a
+Imagine it like this. The model has a **vocabulary**: every word fragment it can read or write, each one is an entry
+with a
 fixed number. For example Llama 3 70B has **128,256** of them. And it has an **embedding
 dimension**: how many directions that space has, which for this model is **8,192**. Take the word "bank". That's one
 entry in the vocabulary, and what the model looks up under that entry is a list of 8,192 numbers.
@@ -47,22 +49,23 @@ similar things.
 And that lookup is fixed. There is one entry for "bank," holding one list, so every "bank" the model ever reads starts
 from the same 8,192 numbers — which can't be right, because the right numbers depend on the neighbours. Take "river
 bank" and "bank loan" — "bank" arrives with the identical list in both, and the model has to pull it toward the *water*
-region of the space in one and the *money* region in the other. You did that just now without noticing; you never even
+region of the space in one and the *money* region in the other. You did that just now without noticing, you never even
 considered the money sense of the first one. The model has no such instinct. All it has is arithmetic, so it **adjusts
 each token's numbers using the other tokens' numbers**, and the only way to do that is by multiply and add.
 
 That step is called **attention**: each token compares itself against every other token, then takes most from the ones
 that matter to it.
 
-So every layer, every attention head, every bit of what looks like understanding is one operation, run many many times:
+So every layer, every bit of what looks like understanding is one operation, run many many times:
 
 *take a number, multiply it by a weight, add it to a running total*
 
 That's a **multiply-accumulate**: 2 FLOPs, one multiply and one add.
 
-A weight is just a number — the part that was *learned*. Training worked through an enormous amount of text, settled on
+A **weight** is just a number — the part that was *learned*. Training worked through an enormous amount of text, settled
+on
 values that make these multiply-adds come out useful, then froze them. The same weights run for every token, every
-request, every user. That's what the "70B" counts: 70 billion weights.
+request, every user. That's what the "70B" counts: 70 billion weights, also called **parameters**.
 
 To see the shape of it, shrink a token's list to three numbers. Inputs `a b c`, outputs `x y z`:
 
@@ -82,7 +85,7 @@ between them never moves:
 
 That covers every weight — but not quite every multiply-add. Attention also compares tokens against each other,
 multiplying token numbers by other token numbers, with no weight involved. Those sit outside the 2-FLOPs-per-weight
-count, and we'll come back to them once the prompt gets long enough for them to matter.
+count, and we'll come back to them later in the post.
 
 ### Why moving the weights matters to the cost
 
@@ -110,13 +113,12 @@ standard is **BF16**: 16 bits, so 2 bytes per weight. Which turns a parameter co
 That's where the 140 GB comes from. The <span class="accent-teal">chip</span> does have a
 little <span class="accent-orange">memory</span> of its own — SRAM, much faster but there is very
 little of it: tens of megabytes, against that model's 140,000 megabytes of weights. So a <span class="accent-teal">
-chip</span> can never hold enough to
-keep a model resident. The weights live in VRAM, and they have to make the trip.
+chip</span> can never hold all of the model weights. The weights live in VRAM, and they have to make the trip.
 
 That trip has a speed limit, and it has a name — <span class="accent-orange">memory bandwidth</span>. For an H100
 it's **3.35 TB/s**.
 
-140 GB also doesn't fit on one card; an H100 holds 80 GB. Two would hold it, but that leaves almost nothing spare, and
+140 GB also doesn't fit on one card, an H100 holds 80 GB. Two would hold it, but that leaves almost nothing spare, and
 you'll see at the end why that isn't enough. So in practice you spread it wider — say four cards, each holding 35 GB,
 every layer cut four ways, each card doing a quarter of the multiply-adds.
 
@@ -225,7 +227,7 @@ forward pass contains two kinds of multiply-add and only one has appeared so far
 the work. This is the arithmetic the 141 ms measured.
 
 **Token × token.** Attention compares each token against the ones before it, no weights involved. Here the tokens
-*don't* cost the same. Token 10 has 9 tokens to compare itself against; token 100,000 has 99,999. Late tokens cost far
+*don't* cost the same. Token 10 has 9 tokens to compare itself against, token 100,000 has 99,999. Late tokens cost far
 more than early ones, and the longer your prompt, the more late tokens it has.
 
 So input cost is two costs added together. Double your prompt and the weight part doubles with it. The attention part
@@ -233,7 +235,7 @@ doesn't — double the tokens and you get four times the comparisons.
 
 At a thousand tokens that second part is too small to matter, which is why every figure above ignored it. Somewhere
 around fifty thousand tokens the two are equal. By a hundred thousand, the comparing costs twice as much as the weight
-math.
+<span class="accent-teal">math</span>.
 
 {{< themeimg src="input-isnt-linear.png" alt="Click to zoom" >}}
 
@@ -242,14 +244,15 @@ math.
 To keep the arithmetic simple, everything above assumed the GPU is generating for exactly one person. In reality no
 provider runs that way, and serving many people at once changes what the weight reloading costs.
 
-Remember what made decode so expensive: 41.8 ms hauling weights, 0.14 ms using them — for 99.7% of every token,
+Remember what made decode so expensive: 41.8 ms pulling weights, 0.14 ms using them — for 99.7% of every token,
 the <span class="accent-teal">chip</span>
 has nothing to do. That idle time is what makes serving many users at once nearly free: the weights are being read
 anyway, so the same trip through <span class="accent-orange">memory</span> can feed more than one request.
 
 **Batching** does exactly that. Gather more users who all need the next token of their own response — say 295 of them —
 load layer 1's weights *once*, and use them for all 295 before letting them go. 295 is the **batch size**, and the
-number comes from the hardware: the read takes 41.8 ms, one user's math takes 0.14 ms, so that many users fit inside the
+number comes from the hardware: the read takes 41.8 ms, one user's <span class="accent-teal">math</span> takes 0.14 ms,
+so that many users fit inside the
 time the read was going to take anyway. It's the point where the <span class="accent-teal">chip</span> is finally busy.
 
 | Users in the batch | Reading the weights | Doing the math | Step takes | Tokens out |
@@ -258,8 +261,10 @@ time the read was going to take anyway. It's the point where the <span class="ac
 |                 64 |             41.8 ms |         9.1 ms |    41.8 ms |         64 |
 |                295 |             41.8 ms |        41.7 ms |    41.8 ms |        295 |
 
-It's the same 140 GB read every time — that's why the first column never moves, and why the step takes 41.8 ms whether
-it serves one person or 295. Only the math column grows, filling time the <span class="accent-teal">chip</span> was
+It's the same 140 GB read every time — that's why the column "Reading the weights" never moves, and why the step takes
+41.8 ms whether
+it serves one person or 295. Only the <span class="accent-teal">math</span> column grows, filling time
+the <span class="accent-teal">chip</span> was
 already spending on the read.
 
 Which leaves the obvious question: if 295 people can split one read, why is output still the expensive side?
@@ -277,7 +282,7 @@ every user at once. But your KV cache is *your conversation*. Nobody else can us
 separately, every step.
 
 And it has to *sit somewhere* — the same VRAM holding the weights. Those four H100s have 320 GB between them; take out
-the 140 GB model and the ~45 GB the server needs, and there's roughly **135 GB** left to hand
+the 140 GB for model weights and the ~45 GB the server needs, and there's roughly **135 GB** left to hand
 out. The cache grows with every token of context, so the longer the conversations, the fewer of them fit:
 
 | Context per user | KV cache each | Users before the node is full |
@@ -286,14 +291,15 @@ out. The cache grows with every token of context, so the longer the conversation
 | 32K              |       10.7 GB |                            12 |
 | 128K             |       42.9 GB |                             3 |
 
-The math had room for 295 people. <span class="accent-orange">Memory</span> runs out at 50 — or at three. *
+The <span class="accent-teal">math</span> had room for 295 people. <span class="accent-orange">Memory</span> runs out at
+50 — or at three. *
 *<span class="accent-orange">Memory</span> is
 what you run out of, never the <span class="accent-teal">chip</span>.**
 
 And that's the answer to the question. Take the 8K row: 50 users in the batch, so a decode step still reads all 140 GB
-in 41.8 ms but only does 7 ms of math. The <span class="accent-teal">chip</span> sits at **17%** — while prefill, with
-all 1,000 tokens in hand, runs it
-at 100%. Same box, same cost per second:
+in 41.8 ms but only does 7 ms of <span class="accent-teal">math</span>. The <span class="accent-teal">chip</span> sits
+at **17%** — while prefill, with
+all 1,000 tokens in hand, runs it at 100%.
 
 ```markdown
 Output, batch 50 : 50 tokens per 41.8 ms ≈ 1,200 tokens/second
@@ -316,7 +322,7 @@ every token of context — until what you run out of is <span class="accent-oran
 So what you're actually paying for is time on the GPU, and three different things decide how much:
 
 **Input is billed as <span class="accent-teal">compute</span>, output is billed as <span class="accent-orange">
-bandwidth</span>, and context length is billed as rent on the box.**
+bandwidth</span>, and context length is billed as space in <span class="accent-orange">memory</span>.**
 
 ---
 
@@ -324,13 +330,15 @@ bandwidth</span>, and context length is billed as rent on the box.**
 
 **Hardware**
 
-- [NVIDIA H100 product page](https://www.nvidia.com/en-us/data-center/h100/) — 989.5 TFLOPS dense BF16; 3.35 TB/s HBM3; 80 GB
+- [NVIDIA H100 product page](https://www.nvidia.com/en-us/data-center/h100/) — 989.5 TFLOPS dense BF16; 3.35 TB/s HBM3;
+  80 GB
 - [NVIDIA — KV cache offload with CPU–GPU memory sharing](https://developer.nvidia.com/blog/accelerate-large-scale-llm-inference-and-kv-cache-offload-with-cpu-gpu-memory-sharing/) — ~
   140 GB of weights for Llama 3 70B at FP16; ~40 GB of KV cache at a 128K context
 
 **Model mechanics**
 
-- [Llama 3 70B `config.json`](https://huggingface.co/meta-llama/Meta-Llama-3-70B/blob/main/config.json) — `vocab_size`128,256 and `hidden_size` 8,192
+- [Llama 3 70B `config.json`](https://huggingface.co/meta-llama/Meta-Llama-3-70B/blob/main/config.json) — `vocab_size`
+  128,256 and `hidden_size` 8,192
 - [Transformer Explainer](https://poloclub.github.io/transformer-explainer/) (Georgia Tech) — interactive visualization
   of GPT-2 Small
 - [Attention Is All You Need](https://arxiv.org/abs/1706.03762) — §3.2.3 on preserving "the auto-regressive property,"
@@ -339,10 +347,9 @@ bandwidth</span>, and context length is billed as rent on the box.**
 **Cost structure at long context**
 
 - [Meta Engineering — Scaling LLM inference](https://engineering.fb.com/2025/10/17/ai-research/scaling-llm-inference-innovations-tensor-parallelism-context-parallelism-expert-parallelism/) —
-  Llama 3 405B: 128K-token prefill in 3.8 s, 1M-token prefill in 77 s — 8× the tokens, 20× the time, which is the
-  quadratic term showing up in a measurement
+  Llama 3 405B: 128K-token prefill in 3.8 s, 1M-token prefill in 77 s — 8× the tokens, 20× the time, which is
+  "double the tokens, four times the comparisons" showing up in a measurement
 
 **Pricing**
 
-- [Anthropic pricing documentation](https://platform.claude.com/docs/en/pricing) — the input/output rates behind the 5×
-  in the opening
+- [Anthropic pricing documentation](https://platform.claude.com/docs/en/pricing) — the input/output rates behind the x5 in the opening
