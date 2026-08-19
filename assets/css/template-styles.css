@@ -833,12 +833,13 @@ h1 svg {
     display: flex;
     flex-direction: row-reverse;
     justify-content: flex-end;
+    align-items: baseline;
 }
 
 .h2-container a {
     margin-top: 0;
     top: 0;
-    line-height: 0;
+    line-height: 1;
     left: -1em;
     border: 0;
 }

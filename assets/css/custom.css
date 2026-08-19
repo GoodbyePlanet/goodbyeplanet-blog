@@ -366,6 +366,76 @@ main h6 {
     color: #f0f0f0;
 }
 
+/* Heading rhythm - a heading belongs to the section below it, so it needs
+   clearly more air above than below. The theme's `* + *` owl gives a flat 1rem
+   in both directions, which leaves every heading floating equidistant between
+   the paragraph it ends and the one it introduces. The anchor-link script wraps
+   each heading in `div.h2-container`, so that wrapper is the element in flow -
+   the bare-heading selectors cover the no-id / no-JS case. */
+main .h2-container,
+main > h3,
+main > h4,
+main > h5,
+main > h6 {
+    margin-top: 1.8rem;
+}
+
+/* Sub-headings break the flow less, so they sit closer to what precedes them. */
+main .h2-container:has(h4),
+main .h2-container:has(h5),
+main .h2-container:has(h6),
+main > h4,
+main > h5,
+main > h6 {
+    margin-top: 2rem;
+}
+
+main .h2-container + *,
+main > h3 + *,
+main > h4 + *,
+main > h5 + *,
+main > h6 + * {
+    margin-top: 0.6rem;
+}
+
+/* An <hr> already marks the section break - don't stack both gaps. */
+main hr {
+    margin-top: 2.5rem;
+}
+
+main hr + .h2-container,
+main hr + h3,
+main hr + h4 {
+    margin-top: 1.5rem;
+}
+
+/* List rhythm - a bulleted list is usually the continuation of the sentence
+   that introduces it, so it should read as one block with that sentence rather
+   than as three separated islands. The theme gives items 0.5rem apart and the
+   list a full 1rem from the surrounding paragraphs. */
+main li + li {
+    margin-top: 0.25rem;
+}
+
+main p + ul,
+main p + ol {
+    margin-top: 0.75rem;
+}
+
+main ul + p,
+main ol + p {
+    margin-top: 0.75rem;
+}
+
+/* Paragraph lead-ins - the labelled cases that open a paragraph ("One output
+   token.", "One thousand input tokens.") act as inline headings, so they get an
+   underline on top of the bold to mark them as the case being answered. */
+main .lead-in {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+}
+
 /* Accent terms - used sparingly in post content to color-code key concepts,
    ngrok-style (see mcp-rag-semantic-code-search). */
 main .accent-orange {
@@ -380,6 +450,20 @@ main .accent-teal {
 
 :root[data-theme="dark"] main .accent-teal {
     color: #4fd8c4;
+}
+
+/* Theme-aware diagrams (see layouts/shortcodes/themeimg.html). data-theme is
+   always set before the body is revealed, so only one variant ever paints. */
+.theme-dark-only {
+    display: none;
+}
+
+:root[data-theme="dark"] .theme-light-only {
+    display: none;
+}
+
+:root[data-theme="dark"] .theme-dark-only {
+    display: inline;
 }
 
 .nav-list-top {
