@@ -5,6 +5,11 @@
 {{ $rocket := resources.Get "js/rocket.js" | minify | fingerprint }}
 <script defer src="{{ $rocket.RelPermalink }}" integrity="{{ $rocket.Data.Integrity }}"></script>
 
+{{ if and (eq .Kind "page") (eq .Type "post") }}
+  {{ $postLikes := resources.Get "js/post-likes.js" | minify | fingerprint }}
+  <script defer src="{{ $postLikes.RelPermalink }}" integrity="{{ $postLikes.Data.Integrity }}"></script>
+{{ end }}
+
 {{ if site.Params.search }}
 {{ $searchJs := resources.Get "js/search.js" | fingerprint }}
 <script src="{{ $searchJs.RelPermalink }}"></script>
