@@ -956,3 +956,163 @@ body.no-rocket main#main > p:first-of-type:has(> a > img) {
         margin-inline: auto;
     }
 }
+
+/* FLOATING POST LIKE (see layouts/partials/post-likes.html) */
+:root {
+    --like-surface: #ffffff;
+    --like-border: rgba(0, 0, 0, 0.14);
+    --like-ink: #4a4a4a;
+    --like-accent: #111111;
+}
+
+html[data-theme="dark"] {
+    --like-surface: #2b2f38;
+    --like-border: rgba(255, 255, 255, 0.16);
+    --like-ink: #d8d8d8;
+    --like-accent: #f2f2f2;
+}
+
+.post-likes {
+    position: fixed;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    /* Above the content, well below the lightbox2 overlay at 9999. */
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.post-likes__btn {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid var(--like-border);
+    border-radius: 999px;
+    background: var(--like-surface);
+    color: var(--like-ink);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.post-likes:not(.is-full) .post-likes__btn:hover {
+    color: var(--like-accent);
+    border-color: var(--like-accent);
+    transform: scale(1.06);
+}
+
+.post-likes__glyph {
+    position: relative;
+    display: block;
+    width: 1.35rem;
+    height: 1.35rem;
+    /* The theme's reset gives every element `background-color: inherit`, which
+       would have the stacked layers paint the button's background over each
+       other. */
+    background-color: transparent;
+}
+
+.post-likes__icon {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: block;
+    width: 1.35rem;
+    height: 1.35rem;
+    background-color: transparent;
+    /* The theme gives every `button svg` a margin-right, which knocks the
+       glyph off centre inside the round button. */
+    margin: 0;
+}
+
+/* Two stacked copies of #heart: the solid one is revealed from the bottom by
+   .post-likes__fill and sits under the outline, so the stroke stays crisp. */
+.post-likes__icon--outline {
+    fill: none;
+    stroke: currentColor;
+}
+
+.post-likes__icon--solid {
+    fill: currentColor;
+    stroke: none;
+}
+
+/* --like-fill is a percentage of the glyph box, set per click in JS. Its floor
+   sits just under the heart's bottom tip, so level 0 shows nothing. */
+.post-likes__fill {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: transparent;
+    height: var(--like-fill, 10%);
+    overflow: hidden;
+    transition: height 0.26s ease-out;
+}
+
+.post-likes.is-liked .post-likes__btn {
+    /* Only the heart fills in; a matching black ring reads too heavy. */
+    color: var(--like-accent);
+}
+
+.post-likes.is-full .post-likes__btn {
+    cursor: default;
+}
+
+.post-likes__count {
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--like-ink);
+}
+
+/* Subtle, because it fires on every one of the ten clicks. */
+@keyframes like-pop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.16); }
+    100% { transform: scale(1); }
+}
+
+@keyframes like-pop-full {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.32); }
+    70% { transform: scale(0.96); }
+    100% { transform: scale(1); }
+}
+
+.post-likes.is-popping .post-likes__glyph {
+    animation: like-pop 0.28s ease-out;
+}
+
+.post-likes.is-popping.is-full .post-likes__glyph {
+    animation: like-pop-full 0.45s ease-out;
+}
+
+@media (max-width: 900px) {
+    /* Bottom-right on narrow screens, where the text column fills the width. */
+    .post-likes {
+        right: 1rem;
+        top: auto;
+        bottom: 1rem;
+        transform: none;
+    }
+
+    .post-likes__btn {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .post-likes__btn,
+    .post-likes__fill,
+    .post-likes.is-popping .post-likes__glyph,
+    .post-likes.is-popping.is-full .post-likes__glyph {
+        transition: none;
+        animation: none;
+    }
+}
