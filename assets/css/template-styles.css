@@ -353,6 +353,30 @@ caption {
     padding: 1rem 2rem;
 }
 
+/* Post detail: hold the prose to a comfortable measure (~70 characters at the
+   current type scale) while code blocks, figures and tables keep the full
+   column width. */
+.post-page main > p,
+.post-page main > ul,
+.post-page main > ol,
+.post-page main > dl,
+.post-page main > blockquote,
+.post-page main > hr,
+.post-page main > h2,
+.post-page main > h3,
+.post-page main > h4,
+.post-page main > h5,
+.post-page main > h6,
+.post-page main > .single-title,
+.post-page main > .toc {
+    max-width: 35rem;
+}
+/* Paragraphs that only carry an image are figures in disguise, let them out. */
+.post-page main > p:has(> img),
+.post-page main > p:has(> a > img) {
+    max-width: none;
+}
+
 [role="contentinfo"] {
     font-size: 0.85rem;
     text-align: center;
