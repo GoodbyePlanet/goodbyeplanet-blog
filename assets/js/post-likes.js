@@ -13,7 +13,7 @@
 
     const ROOT_SELECTOR = ".post-likes";
     const STORAGE_KEY = "likedPosts";
-    const TABLE = "post_likes";
+    const TABLE_FALLBACK = "post_likes";
     const RPC = "increment_likes";
 
     const MAX_LIKES = 10;
@@ -64,6 +64,7 @@
 
         const url = root.dataset.likesUrl;
         const key = root.dataset.likesKey;
+        const table = root.dataset.likesTable || TABLE_FALLBACK;
         const remote = Boolean(url && key && counter);
         const headers = remote
             ? { apikey: key, Authorization: "Bearer " + key, "Content-Type": "application/json" }
@@ -117,7 +118,7 @@
 
         function fetchCount() {
             const query =
-                url + "/rest/v1/" + TABLE + "?slug=eq." + encodeURIComponent(slug) + "&select=likes";
+                url + "/rest/v1/" + table + "?slug=eq." + encodeURIComponent(slug) + "&select=likes";
 
             fetch(query, { headers })
                 .then((response) => (response.ok ? response.json() : Promise.reject(response.status)))

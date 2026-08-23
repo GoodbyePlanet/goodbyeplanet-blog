@@ -44,6 +44,51 @@
     color: #666;
 }
 
+/* Read-only like count on a card, on the date's line so the count arriving
+   after paint cannot shift the grid. See assets/js/post-likes-list.js. */
+.post-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    /* Holds the line open on cards whose post has no likes yet. */
+    min-height: 1.15rem;
+}
+
+.post-card__likes {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    /* The theme's `* + *` owl rule would drop the count a line below the
+       heart, and the heart below the date. */
+    margin-top: 0;
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    color: #666;
+    /* Revealed by .is-loaded once a count lands; posts with no likes yet keep
+       the card exactly as it looks without the feature. */
+    visibility: hidden;
+}
+
+.post-card__likes.is-loaded {
+    visibility: visible;
+}
+
+.post-card__likes > * {
+    margin-top: 0;
+}
+
+.post-card__likes-icon {
+    width: 0.85rem;
+    height: 0.85rem;
+    /* Overrides the theme's `a svg` sizing and its trailing margin. */
+    flex: none;
+    fill: currentColor;
+    stroke: none;
+    background-color: transparent;
+    margin: 0;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
