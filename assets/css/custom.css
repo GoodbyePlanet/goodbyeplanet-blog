@@ -8,7 +8,8 @@
 .post-image {
     width: 100%;
     aspect-ratio: 16 / 9;
-    background-color: #eee;
+    /* Reads as the letterbox behind a contained image, see below. */
+    background-color: #f4f4f4;
     border-radius: 4px;
     overflow: hidden;
 }
@@ -16,11 +17,18 @@
 .post-image img {
     width: 100%;
     height: 100%;
+    /* Contained and letterboxed inside the fixed 16/9 box above: the posts'
+       images are wide diagrams, and `cover` sliced the labels off the top and
+       bottom of the taller ones. The box keeps its height either way, which is
+       what actually aligns the rows. */
     object-fit: contain;
     /* Fade in effect when lazy loaded */
     animation: fadeIn 0.5s ease-in;
 }
 
+/* Cards stretch to the tallest in their grid row and the anchor fills the
+   card, so the whole card is one click target and the meta line of every card
+   in a row sits at the same height. */
 .post-card {
     display: flex;
     flex-direction: column;
@@ -29,7 +37,15 @@
 .post-card a {
     text-decoration: none;
     color: inherit;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.post-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .post-title {
@@ -37,11 +53,70 @@
     margin: 1rem 0 0.2rem 0;
     line-height: 1.3;
     font-weight: 500;
+    /* Two lines, always: a one-line title would otherwise pull everything
+       below it up and stagger the row. */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: calc(2 * 1.3 * 1.1rem);
 }
 
-.post-date {
+.post-excerpt {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: #555;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0.6rem 0 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.post-tags__tag {
+    /* The theme's `li + li` owl rule would stack these vertically. */
+    margin: 0;
+    padding: 0.1rem 0.45rem;
+    border: 1px solid #ddd;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: #555;
+    white-space: nowrap;
+}
+
+.post-date,
+.post-reading-time {
     font-size: 0.85rem;
     color: #666;
+}
+
+.post-meta__dates {
+    display: inline-flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    /* Cancels the theme's `* + *` owl rule inside the meta row. */
+    margin-top: 0;
+}
+
+.post-meta__dates > * {
+    margin-top: 0;
+}
+
+/* Separates "Updated: ..." from "N min read" without an extra element. */
+.post-reading-time::before {
+    content: "\00b7";
+    margin-right: 0.35rem;
 }
 
 /* Read-only like count on a card, on the date's line so the count arriving
@@ -53,6 +128,10 @@
     gap: 0.75rem;
     /* Holds the line open on cards whose post has no likes yet. */
     min-height: 1.15rem;
+    /* Pins the meta row to the bottom of the card so it lines up across the
+       grid row regardless of how tall the excerpt and tags ended up. */
+    margin-top: auto;
+    padding-top: 0.6rem;
 }
 
 .post-card__likes {
@@ -87,6 +166,21 @@
     stroke: none;
     background-color: transparent;
     margin: 0;
+}
+
+/* The dark theme's blanket `* { color: inherit }` cannot reach these class
+   selectors, so the muted greys need explicit dark values or they go
+   near-invisible on the dark background. */
+:root[data-theme="dark"] .post-excerpt,
+:root[data-theme="dark"] .post-tags__tag,
+:root[data-theme="dark"] .post-date,
+:root[data-theme="dark"] .post-reading-time,
+:root[data-theme="dark"] .post-card__likes {
+    color: #a3a9b5;
+}
+
+:root[data-theme="dark"] .post-tags__tag {
+    border-color: #3a3f4b;
 }
 
 @keyframes fadeIn {

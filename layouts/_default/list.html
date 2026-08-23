@@ -28,6 +28,9 @@
         {{ if $likes.url }}data-likes-table="{{ $likes.table }}"{{ end }}
     >
         {{ range $filteredPages.ByPublishDate.Reverse }}
+        {{/* `.` becomes the image resource inside `with $image` below, so the
+             post title is captured here for the alt text. */}}
+        {{ $postTitle := .Title }}
         <article class="post-card">
             <a href="{{ .RelPermalink }}">
                 <div class="post-image">
@@ -43,7 +46,7 @@
                             src="{{ $processed.RelPermalink }}"
                             width="{{ $processed.Width }}"
                             height="{{ $processed.Height }}"
-                            alt="{{ $.Title }}"
+                            alt="{{ $postTitle }}"
                             loading="lazy"
                             decoding="async"
                     >
@@ -53,8 +56,44 @@
                 </div>
                 <div class="post-content">
                     <h2 class="post-title">{{ .Title }}</h2>
+
+                    {{/* Posts carry no `description` front matter yet, so the
+                         excerpt falls back to the first real paragraph of the
+                         post. Hugo's .Summary is a poor substitute here: posts
+                         open with an inline image or a code fence, and its first
+                         70 words then come out as markup or as the line numbers
+                         of a highlighted block. */}}
+                    {{ $excerpt := .Description }}
+                    {{ if not $excerpt }}
+                    {{ range first 6 (findRE "(?s)<p>.*?</p>" .Content) }}
+                    {{ $text := . | plainify | htmlUnescape | strings.TrimSpace }}
+                    {{ if and (not $excerpt) (gt (len $text) 40) }}
+                    {{ $excerpt = $text }}
+                    {{ end }}
+                    {{ end }}
+                    {{ end }}
+                    {{ if not $excerpt }}
+                    {{ $excerpt = .Summary | plainify | htmlUnescape }}
+                    {{ end }}
+                    {{ with $excerpt | strings.TrimSpace }}
+                    <p class="post-excerpt">{{ . | truncate 160 }}</p>
+                    {{ end }}
+
+                    {{ with .Params.tags }}
+                    {{/* Plain text, not links: the whole card is already one
+                         anchor and anchors cannot nest. */}}
+                    <ul class="post-tags" aria-label="{{ T "aria_label_tags" }}">
+                        {{ range first 3 . }}
+                        <li class="post-tags__tag">{{ . }}</li>
+                        {{ end }}
+                    </ul>
+                    {{ end }}
+
                     <div class="post-meta">
-                        <time class="post-date">Updated: {{ .Lastmod.Format "2 Jan, 2006" }}</time>
+                        <span class="post-meta__dates">
+                            <time class="post-date">Updated: {{ .Lastmod.Format "2 Jan, 2006" }}</time>
+                            <span class="post-reading-time">{{ .ReadingTime }} min read</span>
+                        </span>
                         {{ if $likes.url }}
                         {{/* Empty and invisible until the count lands; it shares
                              the date's line, so nothing moves when it does. */}}
