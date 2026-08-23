@@ -1,0 +1,16 @@
+{{/*
+  Shared Supabase plumbing for the like counts: the floating heart on a post
+  page (layouts/partials/post-likes.html) and the read-only counts on the post
+  list (layouts/_default/list.html) both read the same site params through here.
+
+  Returns a dict with "url" (no trailing slash), "key" and "table". "url" and
+  "key" are empty strings when params.likes is not configured, in which case
+  both callers stay silent.
+*/}}
+{{ $url := trim (site.Params.likes.supabaseUrl | default "") "/" }}
+{{ $key := site.Params.likes.supabaseAnonKey | default "" }}
+{{ if not (and $url $key) }}
+  {{ $url = "" }}
+  {{ $key = "" }}
+{{ end }}
+{{ return dict "url" $url "key" $key "table" "post_likes" }}

@@ -17,7 +17,16 @@
     {{ $filteredPages = where $filteredPages "Params.tags" "intersect" (slice $tag) }}
     {{ end }}
 
-    <div class="posts-grid">
+    {{/* Supabase config for the read-only like counts. It sits on the grid,
+         not on each card: assets/js/post-likes-list.js fills every card from
+         one request. See layouts/partials/likes-config.html. */}}
+    {{ $likes := partial "likes-config.html" . }}
+    <div
+        class="posts-grid"
+        {{ with $likes.url }}data-likes-url="{{ . }}"{{ end }}
+        {{ with $likes.key }}data-likes-key="{{ . }}"{{ end }}
+        {{ if $likes.url }}data-likes-table="{{ $likes.table }}"{{ end }}
+    >
         {{ range $filteredPages.ByPublishDate.Reverse }}
         <article class="post-card">
             <a href="{{ .RelPermalink }}">
@@ -44,7 +53,22 @@
                 </div>
                 <div class="post-content">
                     <h2 class="post-title">{{ .Title }}</h2>
-                    <time class="post-date">Updated: {{ .Lastmod.Format "2 Jan, 2006" }}</time>
+                    <div class="post-meta">
+                        <time class="post-date">Updated: {{ .Lastmod.Format "2 Jan, 2006" }}</time>
+                        {{ if $likes.url }}
+                        {{/* Empty and invisible until the count lands; it shares
+                             the date's line, so nothing moves when it does. */}}
+                        <span
+                            class="post-card__likes"
+                            data-likes-slug="{{ .File.ContentBaseName | default (.RelPermalink | urlize) }}"
+                        >
+                            <svg class="post-card__likes-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                                <use href="#heart"></use>
+                            </svg>
+                            <span class="post-card__likes-count"></span>
+                        </span>
+                        {{ end }}
+                    </div>
                 </div>
             </a>
         </article>

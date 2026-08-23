@@ -10,6 +10,12 @@
   <script defer src="{{ $postLikes.RelPermalink }}" integrity="{{ $postLikes.Data.Integrity }}"></script>
 {{ end }}
 
+{{/* The post list and the tag pages both render the cards from _default/list.html. */}}
+{{ if or (eq .Kind "section") (eq .Kind "term") }}
+  {{ $postLikesList := resources.Get "js/post-likes-list.js" | minify | fingerprint }}
+  <script defer src="{{ $postLikesList.RelPermalink }}" integrity="{{ $postLikesList.Data.Integrity }}"></script>
+{{ end }}
+
 {{ if site.Params.search }}
 {{ $searchJs := resources.Get "js/search.js" | fingerprint }}
 <script src="{{ $searchJs.RelPermalink }}"></script>

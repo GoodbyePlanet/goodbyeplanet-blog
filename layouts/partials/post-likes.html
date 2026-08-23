@@ -8,17 +8,20 @@
 
   Renders on post pages only. When params.likes holds a Supabase url + anon key
   the count is shared across all readers; without it the heart still fills and
-  the level is remembered locally, just without a count.
+  the level is remembered locally, just without a count. The config is read
+  through partials/likes-config.html, shared with the post list.
   See assets/js/post-likes.js.
 */}}
 {{ $slug := .File.ContentBaseName | default (.RelPermalink | urlize) }}
-{{ $url := trim (.Site.Params.likes.supabaseUrl | default "") "/" }}
-{{ $key := .Site.Params.likes.supabaseAnonKey | default "" }}
+{{ $likes := partial "likes-config.html" . }}
+{{ $url := $likes.url }}
+{{ $key := $likes.key }}
 <aside
   class="post-likes"
   data-likes-slug="{{ $slug }}"
   {{ with $url }}data-likes-url="{{ . }}"{{ end }}
   {{ with $key }}data-likes-key="{{ . }}"{{ end }}
+  {{ if and $url $key }}data-likes-table="{{ $likes.table }}"{{ end }}
 >
   <button
     type="button"
