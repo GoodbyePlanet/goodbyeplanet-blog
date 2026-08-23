@@ -66,7 +66,7 @@
                     {{ $excerpt := .Description }}
                     {{ if not $excerpt }}
                     {{ range first 6 (findRE "(?s)<p>.*?</p>" .Content) }}
-                    {{ $text := . | plainify | htmlUnescape | strings.TrimSpace }}
+                    {{ $text := trim (. | plainify | htmlUnescape) " \n\r\t" }}
                     {{ if and (not $excerpt) (gt (len $text) 40) }}
                     {{ $excerpt = $text }}
                     {{ end }}
@@ -75,7 +75,7 @@
                     {{ if not $excerpt }}
                     {{ $excerpt = .Summary | plainify | htmlUnescape }}
                     {{ end }}
-                    {{ with $excerpt | strings.TrimSpace }}
+                    {{ with trim $excerpt " \n\r\t" }}
                     <p class="post-excerpt">{{ . | truncate 160 }}</p>
                     {{ end }}
 
