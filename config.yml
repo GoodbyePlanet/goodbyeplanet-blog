@@ -11,6 +11,8 @@ params:
   # scoped by row level security: reads are allowed, writes only go through the
   # increment_likes() function. Leave these empty and the heart still renders,
   # it just keeps the like in the reader's browser without a shared count.
+  # That row level security is what docs/supabase-post-likes.sql sets up; the
+  # key is only safe to publish once that script has been run.
   likes:
     supabaseUrl: "https://vzudpehbcvvvtkaivndr.supabase.co"
     supabaseAnonKey: "sb_publishable_zFAfdsfikoEihlpFjnm1Ig_htl6Ehp1"
