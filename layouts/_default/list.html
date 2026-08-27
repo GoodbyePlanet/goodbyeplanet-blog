@@ -36,7 +36,16 @@
                 <div class="post-image">
                     {{ $image := .Resources.GetMatch "featured-image*" }}
                     {{ if not $image }}
-                    {{ $image = .Resources.GetMatch "{*.jpg,*.png,*.webp}" }}
+                    {{/* Cards always show the light variant: the grid keeps a
+                         light letterbox in both themes, and "<name>-dark.png"
+                         sorts ahead of "<name>.png", so a plain GetMatch would
+                         pick the dark one. See layouts/shortcodes/themeimg.html
+                         for the in-post, theme-aware pairing. */}}
+                    {{ range .Resources.Match "{*.jpg,*.png,*.webp}" }}
+                    {{ if and (not $image) (not (strings.Contains .Name "-dark.")) }}
+                    {{ $image = . }}
+                    {{ end }}
+                    {{ end }}
                     {{ end }}
 
                     {{ with $image }}

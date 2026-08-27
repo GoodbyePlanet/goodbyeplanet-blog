@@ -6,7 +6,7 @@ authors:
   - Nemanja
 ---
 
-[![Click to zoom](input-vs-output-cost.png)](input-vs-output-cost.png)
+{{< themeimg src="input-vs-output.png" alt="Click to zoom" >}}
 
 Every AI provider charges you separately for input and output tokens, and output is the expensive half — four to eight
 times the input rate (Anthropic prices every Claude model at exactly x5 for output tokens). That gap isn't arbitrary. If
